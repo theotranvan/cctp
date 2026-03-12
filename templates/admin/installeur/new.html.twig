@@ -1,0 +1,16 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Nouveau Installeur{% endblock %}
+
+{% block body %}
+    <h1>Créer nouveau Installeur</h1>
+
+    <div class="divButton">
+        <a class="btn btn-primary" href="{{ path('installeur_index') }}" role="button">Retour liste Installeur</a>
+        <a class="btn btn-secondary" href="{{ path('admin_home') }}" role="button">Retour à l'acceuil</a>
+    </div>
+
+    <div class="container">
+        {{ include('admin/installeur/_form.html.twig') }}
+    </div>
+{% endblock %}

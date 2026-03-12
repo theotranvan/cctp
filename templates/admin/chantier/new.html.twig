@@ -1,0 +1,14 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Nouveau Chantier{% endblock %}
+
+{% block body %}
+    <h1>Créer nouveau Chantier</h1>
+    <div class="divButton">
+        <a class="btn btn-primary" href="{{ path('chantier_index') }}">Retour liste chantier</a>
+        <a class="btn btn-secondary" href="{{ path('admin_home') }}" role="button">Retour à l'accueil</a>
+    </div>
+    <div class="container">
+        {{ include('admin/chantier/_form.html.twig') }}   
+    </div>
+{% endblock %}

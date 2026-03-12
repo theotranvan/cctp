@@ -1,0 +1,7 @@
+{{ form_start(form) }}
+    {{ form_widget(form) }}
+    {{ form_start(form1) }}
+        {{ form_widget(form1) }}
+    <button class="btn btn-success">{{ button_label|default('Valider') }}</button>
+    {{ form_end(form1) }}
+{{ form_end(form) }}

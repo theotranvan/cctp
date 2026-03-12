@@ -1,0 +1,11 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}New Typeusage{% endblock %}
+
+{% block body %}
+    <h1>Create new Typeusage</h1>
+
+    {{ include('typeusage/_form.html.twig') }}
+
+    <a href="{{ path('app_typeusage_index') }}">back to list</a>
+{% endblock %}

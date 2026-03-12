@@ -1,0 +1,13 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Edit Typeusage{% endblock %}
+
+{% block body %}
+    <h1>Edit Typeusage</h1>
+
+    {{ include('typeusage/_form.html.twig', {'button_label': 'Update'}) }}
+
+    <a href="{{ path('app_typeusage_index') }}">back to list</a>
+
+    {{ include('typeusage/_delete_form.html.twig') }}
+{% endblock %}

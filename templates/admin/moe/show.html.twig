@@ -1,0 +1,41 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Moe{% endblock %}
+
+{% block body %}
+    <h1>Moe</h1>
+
+    <div class="divButtonEditCctp">
+        <a class="btn btn-primary" href="{{ path('moe_index') }}" role="button">Retour liste MOE</a>
+        <a class="btn btn-warning" href="{{ path('moe_edit', {'id': moe.id}) }}" role="button">Mettre à jour</a>
+        {{ include('admin/moe/_delete_form.html.twig') }}
+        <a class="btn btn-secondary" href="{{ path('admin_home') }}" role="button">Retour à l'acceuil</a>
+    </div>
+
+    <div class="container">
+    <table class="table">
+        <tbody>
+            <tr>
+                <th>Id</th>
+                <td>{{ moe.id }}</td>
+            </tr>
+            <tr>
+                <th>Nom_moe</th>
+                <td>{{ moe.nomMoe }}</td>
+            </tr>
+            <tr>
+                <th>Prenom_moe</th>
+                <td>{{ moe.prenomMoe }}</td>
+            </tr>
+            <tr>
+                <th>Tel_moe</th>
+                <td>{{ moe.telMoe }}</td>
+            </tr>
+            <tr>
+                <th>Mail_moe</th>
+                <td>{{ moe.mailMoe }}</td>
+            </tr>
+        </tbody>
+    </table>
+    </div>
+{% endblock %}

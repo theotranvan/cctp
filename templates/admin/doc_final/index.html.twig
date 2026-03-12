@@ -1,0 +1,38 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}DocFinal index{% endblock %}
+
+{% block body %}
+    <h1>DocFinal index</h1>
+
+    <div class="container">
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Id</th>
+                <th>Modifie</th>
+                <th>Produit_id</th>
+                <th>actions</th>
+            </tr>
+        </thead>
+        <tbody>
+        {% for doc_final in doc_finals %}
+            <tr>
+                <td>{{ doc_final.id }}</td>
+                <td>{{ doc_final.content|raw }}</td>
+                <td>{{ doc_final.produitId }}</td>
+                <td>
+                    <a class="btn btn-primary" href="{{ path('doc_final_show', {'id': doc_final.id}) }}">Voir</a>
+                    <a class="btn btn-warning" href="{{ path('doc_final_edit', {'id': doc_final.id}) }}">Mettre à jour</a>
+                </td>
+            </tr>
+        {% else %}
+            <tr>
+                <td colspan="4">no records found</td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+        <a class="btn btn-secondary" href="{{ path('admin_home') }}" role="button">Retour à l'accueil</a>
+    </div>
+{% endblock %}

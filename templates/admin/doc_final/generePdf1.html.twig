@@ -1,0 +1,1602 @@
+{% extends 'base-pdf.html.twig' %}
+
+{% block title %}APPERCU DPGF{% endblock %}
+
+{% block body %}
+<div class="container">
+    
+    <h2 style="text-align:center" class="titre">DECOMPOSITION DU PRIX GLOBAL ET FORFAITAIRE</h2>
+    <!--<h3 style="text-align:center" class="titre">{#{{ cctp.titre }}#}</h3>-->
+    <h3 style="text-align:center" class="titre">{{ cctp.nomOperation }}</h3>
+
+    <table class="table table-bordered" style="margin:0 auto; width:95%; border-collapse:collapse">
+        <thead>
+            <tr>
+                <th style="border:1px solid black; border-collapse:collapse">Numéro</th>
+                <th style="border:1px solid black; border-collapse:collapse">Désignation</th>
+                <th style="border:1px solid black; border-collapse:collapse">Unité</th>
+                <th style="border:1px solid black; border-collapse:collapse">Qté Entreprise</th>
+                <th style="border:1px solid black; border-collapse:collapse">P.U.H.T.</th>
+                <th style="border:1px solid black; border-collapse:collapse">Total</th>
+            </tr>
+        </thead>
+        <tbody>
+        {% set loca = null %}
+        {% set countLoop = 0 %}
+            {% for lot in cctp.lotCctp %}
+            {% set countLot = ( countLot|default(4) ) + 1 %}
+                {% if lot == "Chauffage" %}
+                    <tr>
+                        <td style="border:1px solid black; border-collapse:collapse; background-color:grey">5</td>
+                        <td style="border:1px solid black; border-collapse:collapse; background-color:grey">INSTALLATION DE CHAUFFAGE</td>
+                        <td style="border:1px solid black; border-collapse:collapse; background-color:grey"></td>
+                        <td style="border:1px solid black; border-collapse:collapse; background-color:grey"></td>
+                        <td style="border:1px solid black; border-collapse:collapse"></td>
+                        <td style="border:1px solid black; border-collapse:collapse"></td>
+                    </tr>
+
+                    {% if lot == "Chauffage" and lot.systemes[0] == "Générateur" %}
+                        <tr>
+                            <td style="border:1px solid black">{{ countLot }}.2</td>
+                            <td style="border:1px solid black">PRODUCTION DE CHAUFFAGE</td>
+                            <td style="border:1px solid black"></td>
+                            <td style="border:1px solid black"></td>
+                            <td style="border:1px solid black"></td>
+                            <td style="border:1px solid black"></td>
+                        </tr>
+
+                    {% endif %}
+                        {% for prod in cctp.produits %}
+                            {% if prod.systeme == "Générateur" and prod.lot == "Chauffage" and prod != "Normes Chauffage/Générateur" %} 
+                            {% set counter = ( counter|default(0) ) + 1 %}
+                                {% for docs in prod.docfinals|filter(docs => docs.cctpId == cctp.id) %}  
+                                    {% if docs.quantite != null and docs.localisation == null and docs.type == null %}         
+                                        <tr>
+                                            <td style="border:1px solid black">{{ countLot }}.2.{{ counter }}</td>
+                                            <td style="border:1px solid black">{{ prod }}</td>
+                                            <td style="text-align:center; border:1px solid black">{{ prod.unite }}</td>
+                                            <td style="text-align:center; border:1px solid black">{{ docs.quantite }}</td>
+                                            <td style="border:1px solid black"></td>
+                                            <td style="border:1px solid black"></td>
+                                        </tr>
+                                    {% endif %}
+                                {% endfor %}
+                                    {% if prod.docfinals|length < 2 %}
+                                        {% for docs in prod.docfinals|filter(docs => docs.cctpId == cctp.id) %}
+                                            {% if docs.localisation != null and docs.type == null %}
+                                                <tr>
+                                                    <td style="border:1px solid black">{{ countLot }}.2.{{ counter }}</td>
+                                                    <td style="border:1px solid black">{{ prod }}</td>
+                                                    <td style="text-align:center; border:1px solid black">{{ prod.unite }}</td>
+                                                    <td style="border:1px solid black"></td>
+                                                    <td style="border:1px solid black"></td>
+                                                    <td style="border:1px solid black"></td> 
+                                                </tr> 
+                                                <tr>
+                                                    <td style="border:1px solid black"></td>
+                                                    <td style="border:1px solid black">{{ docs.localisation }}</td>
+                                                    <td style="text-align:center; border:1px solid black">{{ prod.unite }}</td>
+                                                    <td style="text-align:center; border:1px solid black">{{ docs.quantite }}</td>
+                                                    <td style="border:1px solid black"></td>
+                                                    <td style="border:1px solid black"></td>   
+                                                </tr>
+                                            {% elseif docs.localisation != null and docs.type != null %}
+                                                <tr>
+                                                    <td style="border:1px solid black">{{ countLot }}.2.{{ counter }}</td>
+                                                    <td style="border:1px solid black">{{ prod }}</td>
+                                                    <td style="text-align:center; border:1px solid black">{{ prod.unite }}</td>
+                                                    <td style="border:1px solid black"></td>
+                                                    <td style="border:1px solid black"></td>
+                                                    <td style="border:1px solid black"></td> 
+                                                </tr>
+                                                <tr>
+                                                    <td style="border:1px solid black"></td>
+                                                    <td style="border:1px solid black">{{ docs.localisation }}</td>
+                                                    <td style="border:1px solid black"></td>
+                                                    <td style="border:1px solid black"></td>
+                                                    <td style="border:1px solid black"></td>
+                                                    <td style="border:1px solid black"></td>
+                                                    
+                                                </tr>
+                                                <tr>
+                                                    <td style="border:1px solid black"></td>
+                                                    <td style="border:1px solid black">{{ docs.type }}</td>
+                                                    <td style="text-align:center; border:1px solid black">{{ prod.unite }}</td>
+                                                    <td style="text-align:center; border:1px solid black">{{ docs.quantite }}</td>
+                                                    <td style="border:1px solid black"></td>
+                                                    <td style="border:1px solid black"></td>   
+                                                </tr>
+                                            {% endif %}
+                                        {% endfor %}
+                                    {% else %}
+                                        {% for docs in prod.docfinals|filter(docs => docs.cctpId == cctp.id)|slice(0,1) %}
+                                        {% set loca = docs.localisation %}
+                                        {% set countLoop = 0 %}
+                                        <tr>
+                                            <td style="border:1px solid black">{{ countLot }}.2.{{ counter }}</td>
+                                            <td style="border:1px solid black">{{ prod }}</td>
+                                            <td style="text-align:center; border:1px solid black">{{ prod.unite }}</td>
+                                            <td style="border:1px solid black"></td>
+                                            <td style="border:1px solid black"></td>
+                                            <td style="border:1px solid black"></td>    
+                                        </tr>
+                                        {% endfor %} 
+                                        {% for docs in prod.docfinals|filter(docs => docs.cctpId == cctp.id) %}
+                                            {% if docs.localisation != null and docs.type == null %} 
+                                                <tr>
+                                                    <td style="border:1px solid black"></td>
+                                                    <td style="border:1px solid black">{{ docs.localisation }}</td>
+                                                    <td style="text-align:center; border:1px solid black">{{ prod.unite }}</td>
+                                                    <td style="text-align:center; border:1px solid black">{{ docs.quantite }}</td>
+                                                    <td style="border:1px solid black"></td>
+                                                    <td style="border:1px solid black"></td>   
+                                                </tr>  
+                                            {% elseif docs.localisation != null and docs.type != null %}
+                                                {% if loca == docs.localisation and countLoop == 0 %}
+                                                <tr>
+                                                    <td style="border:1px solid black"></td>
+                                                    <td style="border:1px solid black">{{docs.localisation }}</td>
+                                                    <td style="border:1px solid black"></td>
+                                                    <td style="border:1px solid black"></td>
+                                                    <td style="border:1px solid black"></td>
+                                                    <td style="border:1px solid black"></td>    
+                                                </tr>    
+                                                <tr>
+                                                    <td style="border:1px solid black"></td>
+                                                    <td style="border:1px solid black">{{ docs.type }}</td>
+                                                    <td style="text-align:center; border:1px solid black">{{ prod.unite }}</td>
+                                                    <td style="text-align:center; border:1px solid black">{{ docs.quantite }}</td>
+                                                    <td style="border:1px solid black"></td>
+                                                    <td style="border:1px solid black"></td>    
+                                                </tr>
+                                                {% set countLoop = 1 %}
+                                                {% elseif loca == docs.localisation and countLoop == 1 %}
+                                                <tr>
+                                                    <td style="border:1px solid black"></td>
+                                                    <td style="border:1px solid black">{{ docs.type }}</td>
+                                                    <td style="text-align:center; border:1px solid black">{{ prod.unite }}</td>
+                                                    <td style="text-align:center; border:1px solid black">{{ docs.quantite }}</td>
+                                                    <td style="border:1px solid black"></td>
+                                                    <td style="border:1px solid black"></td>    
+                                                </tr>
+                                                {% elseif loca != docs.localisation %}
+                                                <tr>
+                                                    <td style="border:1px solid black"></td>
+                                                    <td style="border:1px solid black">{{docs.localisation }}</td>
+                                                    <td style="border:1px solid black"></td>
+                                                    <td style="border:1px solid black"></td>
+                                                    <td style="border:1px solid black"></td>
+                                                    <td style="border:1px solid black"></td>    
+                                                </tr>    
+                                                <tr>
+                                                    <td style="border:1px solid black"></td>
+                                                    <td style="border:1px solid black">{{ docs.type }}</td>
+                                                    <td style="text-align:center; border:1px solid black">{{ prod.unite }}</td>
+                                                    <td style="text-align:center; border:1px solid black">{{ docs.quantite }}</td>
+                                                    <td style="border:1px solid black"></td>
+                                                    <td style="border:1px solid black"></td>    
+                                                </tr>
+                                                {% set loca = docs.localisation %}
+                                                {% endif %}
+                                            {% endif %}
+                                        {% endfor %}
+                                    {% endif %}
+                            {% endif %}
+                        {% endfor %}
+
+                        {% if (panier != null) %}
+                        {% for ligneSession in panier %}
+                        {% if ligneSession['lot'] == "Chauffage" and ligneSession['systeme'] == "Générateur" %}
+                        <tr>
+                            <td style="border:1px solid black"></td>
+                            <td style="border:1px solid black">{{ ligneSession['descritpion'] }}</td>
+                            <td style="text-align:center; border:1px solid black">{{ ligneSession['unite'] }}</td>
+                            <td style="text-align:center; border:1px solid black">{{ ligneSession['quantite'] }}</td>
+                            <td style="border:1px solid black"></td>
+                            <td style="border:1px solid black"></td>
+                        </tr>
+                        {% endif %}
+                        {% endfor %}
+                        {% endif %}
+
+                    {% if lot == "Chauffage" and lot.systemes[1] == "Distribution" %}
+                        <tr>
+                            <td style="border:1px solid black">{{ countLot }}.3</td>
+                            <td style="border:1px solid black">DISTRIBUTION DE CHAUFFAGE</td>
+                            <td style="border:1px solid black"></td>
+                            <td style="border:1px solid black"></td>
+                            <td style="border:1px solid black"></td>
+                            <td style="border:1px solid black"></td>
+                        </tr>
+                    {% endif %}
+                        {% for prod in cctp.produits %}
+                            {% if prod.systeme == "Distribution" and prod.lot == "Chauffage" and prod != "Normes Chauffage/Distribution" %} 
+                            {% set counter = ( counter|default(0) ) + 1 %}
+                                {% for docs in prod.docfinals|filter(docs => docs.cctpId == cctp.id) %}  
+                                    {% if docs.quantite != null and docs.localisation == null and docs.type == null %}         
+                                        <tr>
+                                            <td style="border:1px solid black">{{ countLot }}.3.{{ counter }}</td>
+                                            <td style="border:1px solid black">{{ prod }}</td>
+                                            <td style="text-align:center; border:1px solid black">{{ prod.unite }}</td>
+                                            <td style="text-align:center; border:1px solid black">{{ docs.quantite }}</td>
+                                            <td style="border:1px solid black"></td>
+                                            <td style="border:1px solid black"></td>
+                                        </tr>
+                                    {% endif %}
+                                {% endfor %}
+                                    {% if prod.docfinals|length < 2 %}
+                                        {% for docs in prod.docfinals|filter(docs => docs.cctpId == cctp.id) %}
+                                            {% if docs.localisation != null and docs.type == null %}
+                                                <tr>
+                                                    <td style="border:1px solid black">{{ countLot }}.3.{{ counter }}</td>
+                                                    <td style="border:1px solid black">{{ prod }}</td>
+                                                    <td style="text-align:center; border:1px solid black">{{ prod.unite }}</td>
+                                                    <td style="border:1px solid black"></td>
+                                                    <td style="border:1px solid black"></td>
+                                                    <td style="border:1px solid black"></td> 
+                                                </tr> 
+                                                <tr>
+                                                    <td style="border:1px solid black"></td>
+                                                    <td style="border:1px solid black">{{ docs.localisation }}</td>
+                                                    <td style="text-align:center; border:1px solid black">{{ prod.unite }}</td>
+                                                    <td style="text-align:center; border:1px solid black">{{ docs.quantite }}</td>
+                                                    <td style="border:1px solid black"></td>
+                                                    <td style="border:1px solid black"></td>   
+                                                </tr>
+                                            {% elseif docs.localisation != null and docs.type != null %}
+                                                <tr>
+                                                    <td style="border:1px solid black">{{ countLot }}.3.{{ counter }}</td>
+                                                    <td style="border:1px solid black">{{ prod }}</td>
+                                                    <td style="text-align:center; border:1px solid black">{{ prod.unite }}</td>
+                                                    <td style="border:1px solid black"></td>
+                                                    <td style="border:1px solid black"></td>
+                                                    <td style="border:1px solid black"></td> 
+                                                </tr>
+                                                <tr>
+                                                    <td style="border:1px solid black"></td>
+                                                    <td style="border:1px solid black">{{ docs.localisation }}</td>
+                                                    <td style="border:1px solid black"></td>
+                                                    <td style="border:1px solid black"></td>
+                                                    <td style="border:1px solid black"></td>
+                                                    <td style="border:1px solid black"></td>
+                                                    
+                                                </tr>
+                                                <tr>
+                                                    <td style="border:1px solid black"></td>
+                                                    <td style="border:1px solid black">{{ docs.type }}</td>
+                                                    <td style="text-align:center; border:1px solid black">{{ prod.unite }}</td>
+                                                    <td style="text-align:center; border:1px solid black">{{ docs.quantite }}</td>
+                                                    <td style="border:1px solid black"></td>
+                                                    <td style="border:1px solid black"></td>   
+                                                </tr>
+                                            {% endif %}
+                                        {% endfor %}
+                                    {% else %}
+                                        {% for docs in prod.docfinals|filter(docs => docs.cctpId == cctp.id)|slice(0,1) %}
+                                        {% set loca = docs.localisation %}
+                                        {% set countLoop = 0 %}
+                                        <tr>
+                                            <td style="border:1px solid black">{{ countLot }}.3.{{ counter }}</td>
+                                            <td style="border:1px solid black">{{ prod }}</td>
+                                            <td style="text-align:center; border:1px solid black">{{ prod.unite }}</td>
+                                            <td style="border:1px solid black"></td>
+                                            <td style="border:1px solid black"></td>
+                                            <td style="border:1px solid black"></td>    
+                                        </tr> 
+                                        {% endfor %}
+                                        {% for docs in prod.docfinals|filter(docs => docs.cctpId == cctp.id) %}
+                                            {% if docs.localisation != null and docs.type == null %} 
+                                                <tr>
+                                                    <td style="border:1px solid black"></td>
+                                                    <td style="border:1px solid black">{{ docs.localisation }}</td>
+                                                    <td style="text-align:center; border:1px solid black">{{ prod.unite }}</td>
+                                                    <td style="text-align:center; border:1px solid black">{{ docs.quantite }}</td>
+                                                    <td style="border:1px solid black"></td>
+                                                    <td style="border:1px solid black"></td>   
+                                                </tr>  
+                                            {% elseif docs.localisation != null and docs.type != null %}
+                                                {% if loca == docs.localisation and countLoop == 0 %}
+                                                <tr>
+                                                    <td style="border:1px solid black"></td>
+                                                    <td style="border:1px solid black">{{docs.localisation }}</td>
+                                                    <td style="border:1px solid black"></td>
+                                                    <td style="border:1px solid black"></td>
+                                                    <td style="border:1px solid black"></td>
+                                                    <td style="border:1px solid black"></td>    
+                                                </tr>    
+                                                <tr>
+                                                    <td style="border:1px solid black"></td>
+                                                    <td style="border:1px solid black">{{ docs.type }}</td>
+                                                    <td style="text-align:center; border:1px solid black">{{ prod.unite }}</td>
+                                                    <td style="text-align:center; border:1px solid black">{{ docs.quantite }}</td>
+                                                    <td style="border:1px solid black"></td>
+                                                    <td style="border:1px solid black"></td>    
+                                                </tr>
+                                                {% set countLoop = 1 %}
+                                                {% elseif loca == docs.localisation and countLoop == 1 %}
+                                                <tr>
+                                                    <td style="border:1px solid black"></td>
+                                                    <td style="border:1px solid black">{{ docs.type }}</td>
+                                                    <td style="text-align:center; border:1px solid black">{{ prod.unite }}</td>
+                                                    <td style="text-align:center; border:1px solid black">{{ docs.quantite }}</td>
+                                                    <td style="border:1px solid black"></td>
+                                                    <td style="border:1px solid black"></td>    
+                                                </tr>
+                                                {% elseif loca != docs.localisation %}
+                                                <tr>
+                                                    <td style="border:1px solid black"></td>
+                                                    <td style="border:1px solid black">{{docs.localisation }}</td>
+                                                    <td style="border:1px solid black"></td>
+                                                    <td style="border:1px solid black"></td>
+                                                    <td style="border:1px solid black"></td>
+                                                    <td style="border:1px solid black"></td>    
+                                                </tr>    
+                                                <tr>
+                                                    <td style="border:1px solid black"></td>
+                                                    <td style="border:1px solid black">{{ docs.type }}</td>
+                                                    <td style="text-align:center; border:1px solid black">{{ prod.unite }}</td>
+                                                    <td style="text-align:center; border:1px solid black">{{ docs.quantite }}</td>
+                                                    <td style="border:1px solid black"></td>
+                                                    <td style="border:1px solid black"></td>    
+                                                </tr>
+                                                {% set loca = docs.localisation %}
+                                                {% endif %}
+                                            {% endif %}
+                                        {% endfor %}
+                                    {% endif %}
+                            {% endif %}
+                        {% endfor %}
+
+                        {% if (panier != null) %}
+                        {% for ligneSession in panier %}
+                        {% if ligneSession['lot'] == "Chauffage" and ligneSession['systeme'] == "Distribution" %}
+                        <tr>
+                            <td style="border:1px solid black"></td>
+                            <td style="border:1px solid black">{{ ligneSession['descritpion'] }}</td>
+                            <td style="text-align:center; border:1px solid black">{{ ligneSession['unite'] }}</td>
+                            <td style="text-align:center; border:1px solid black">{{ ligneSession['quantite'] }}</td>
+                            <td style="border:1px solid black"></td>
+                            <td style="border:1px solid black"></td>
+                        </tr>
+                        {% endif %}
+                        {% endfor %}
+                        {% endif %}
+                    {% if lot == "Chauffage" and lot.systemes[2] == "Emétteur" %}
+                        <tr>
+                            <td style="border:1px solid black">{{ countLot }}.4</td>
+                            <td style="border:1px solid black">SYSTEME D'EMISSION DU CHAUFFAGE</td>
+                            <td style="border:1px solid black"></td>
+                            <td style="border:1px solid black"></td>
+                            <td style="border:1px solid black"></td>
+                            <td style="border:1px solid black"></td>
+                        </tr>
+                    {% endif %}
+                        {% for prod in cctp.produits %}
+                            {% if prod.systeme == "Emétteur" and prod.lot == "Chauffage" and prod != "Normes Chauffage/Emetteur" %} 
+                            {% set counter = ( counter|default(0) ) + 1 %}
+                                {% for docs in prod.docfinals|filter(docs => docs.cctpId == cctp.id) %}  
+                                    {% if docs.quantite != null and docs.localisation == null and docs.type == null %}         
+                                        <tr>
+                                            <td style="border:1px solid black">{{ countLot }}.4.{{ counter }}</td>
+                                            <td style="border:1px solid black">{{ prod }}</td>
+                                            <td style="text-align:center; border:1px solid black">{{ prod.unite }}</td>
+                                            <td style="text-align:center; border:1px solid black">{{ docs.quantite }}</td>
+                                            <td style="border:1px solid black"></td>
+                                            <td style="border:1px solid black"></td>
+                                        </tr>
+                                    {% endif %}
+                                {% endfor %}
+                                    {% if prod.docfinals|length < 2 %}
+                                        {% for docs in prod.docfinals|filter(docs => docs.cctpId == cctp.id) %}
+                                            {% if docs.localisation != null and docs.type == null %}
+                                                <tr>
+                                                    <td style="border:1px solid black">{{ countLot }}.4.{{ counter }}</td>
+                                                    <td style="border:1px solid black">{{ prod }}</td>
+                                                    <td style="text-align:center; border:1px solid black">{{ prod.unite }}</td>
+                                                    <td style="border:1px solid black"></td>
+                                                    <td style="border:1px solid black"></td>
+                                                    <td style="border:1px solid black"></td> 
+                                                </tr> 
+                                                <tr>
+                                                    <td style="border:1px solid black"></td>
+                                                    <td style="border:1px solid black">{{ docs.localisation }}</td>
+                                                    <td style="text-align:center; border:1px solid black">{{ prod.unite }}</td>
+                                                    <td style="text-align:center; border:1px solid black">{{ docs.quantite }}</td>
+                                                    <td style="border:1px solid black"></td>
+                                                    <td style="border:1px solid black"></td>   
+                                                </tr>
+                                            {% elseif docs.localisation != null and docs.type != null %}
+                                                <tr>
+                                                    <td style="border:1px solid black">{{ countLot }}.4.{{ counter }}</td>
+                                                    <td style="border:1px solid black">{{ prod }}</td>
+                                                    <td style="text-align:center; border:1px solid black">{{ prod.unite }}</td>
+                                                    <td style="border:1px solid black"></td>
+                                                    <td style="border:1px solid black"></td>
+                                                    <td style="border:1px solid black"></td> 
+                                                </tr>
+                                                <tr>
+                                                    <td style="border:1px solid black"></td>
+                                                    <td style="border:1px solid black">{{ docs.localisation }}</td>
+                                                    <td style="border:1px solid black"></td>
+                                                    <td style="border:1px solid black"></td>
+                                                    <td style="border:1px solid black"></td>
+                                                    <td style="border:1px solid black"></td>
+                                                    
+                                                </tr>
+                                                <tr>
+                                                    <td style="border:1px solid black"></td>
+                                                    <td style="border:1px solid black">{{ docs.type }}</td>
+                                                    <td style="text-align:center; border:1px solid black">{{ prod.unite }}</td>
+                                                    <td style="text-align:center; border:1px solid black">{{ docs.quantite }}</td>
+                                                    <td style="border:1px solid black"></td>
+                                                    <td style="border:1px solid black"></td>   
+                                                </tr>
+                                            {% endif %}
+                                        {% endfor %}
+                                    {% else %}
+                                        {% for docs in prod.docfinals|filter(docs => docs.cctpId == cctp.id)|slice(0,1) %}
+                                        {% set loca = docs.localisation %}
+                                        {% set countLoop = 0 %}
+                                        <tr>
+                                            <td style="border:1px solid black">{{ countLot }}.4.{{ counter }}</td>
+                                            <td style="border:1px solid black">{{ prod }}</td>
+                                            <td style="text-align:center; border:1px solid black">{{ prod.unite }}</td>
+                                            <td style="border:1px solid black"></td>
+                                            <td style="border:1px solid black"></td>
+                                            <td style="border:1px solid black"></td>    
+                                        </tr>
+                                        {% endfor %} 
+                                        {% for docs in prod.docfinals|filter(docs => docs.cctpId == cctp.id) %}
+                                            {% if docs.localisation != null and docs.type == null %} 
+                                                <tr>
+                                                    <td style="border:1px solid black"></td>
+                                                    <td style="border:1px solid black">{{ docs.localisation }}</td>
+                                                    <td style="text-align:center; border:1px solid black">{{ prod.unite }}</td>
+                                                    <td style="text-align:center; border:1px solid black">{{ docs.quantite }}</td>
+                                                    <td style="border:1px solid black"></td>
+                                                    <td style="border:1px solid black"></td>   
+                                                </tr>  
+                                            {% elseif docs.localisation != null and docs.type != null %}
+                                                {% if loca == docs.localisation and countLoop == 0 %}
+                                                <tr>
+                                                    <td style="border:1px solid black"></td>
+                                                    <td style="border:1px solid black">{{docs.localisation }}</td>
+                                                    <td style="border:1px solid black"></td>
+                                                    <td style="border:1px solid black"></td>
+                                                    <td style="border:1px solid black"></td>
+                                                    <td style="border:1px solid black"></td>    
+                                                </tr>    
+                                                <tr>
+                                                    <td style="border:1px solid black"></td>
+                                                    <td style="border:1px solid black">{{ docs.type }}</td>
+                                                    <td style="text-align:center; border:1px solid black">{{ prod.unite }}</td>
+                                                    <td style="text-align:center; border:1px solid black">{{ docs.quantite }}</td>
+                                                    <td style="border:1px solid black"></td>
+                                                    <td style="border:1px solid black"></td>    
+                                                </tr>
+                                                {% set countLoop = 1 %}
+                                                {% elseif loca == docs.localisation and countLoop == 1 %}
+                                                <tr>
+                                                    <td style="border:1px solid black"></td>
+                                                    <td style="border:1px solid black">{{ docs.type }}</td>
+                                                    <td style="text-align:center; border:1px solid black">{{ prod.unite }}</td>
+                                                    <td style="text-align:center; border:1px solid black">{{ docs.quantite }}</td>
+                                                    <td style="border:1px solid black"></td>
+                                                    <td style="border:1px solid black"></td>    
+                                                </tr>
+                                                {% elseif loca != docs.localisation %}
+                                                <tr>
+                                                    <td style="border:1px solid black"></td>
+                                                    <td style="border:1px solid black">{{docs.localisation }}</td>
+                                                    <td style="border:1px solid black"></td>
+                                                    <td style="border:1px solid black"></td>
+                                                    <td style="border:1px solid black"></td>
+                                                    <td style="border:1px solid black"></td>    
+                                                </tr>    
+                                                <tr>
+                                                    <td style="border:1px solid black"></td>
+                                                    <td style="border:1px solid black">{{ docs.type }}</td>
+                                                    <td style="text-align:center; border:1px solid black">{{ prod.unite }}</td>
+                                                    <td style="text-align:center; border:1px solid black">{{ docs.quantite }}</td>
+                                                    <td style="border:1px solid black"></td>
+                                                    <td style="border:1px solid black"></td>    
+                                                </tr>
+                                                {% set loca = docs.localisation %}
+                                                {% endif %}
+                                            {% endif %}
+                                        {% endfor %}
+                                    {% endif %}
+                            {% endif %}
+                        {% endfor %}
+
+                        {% if (panier != null) %}
+                        {% for ligneSession in panier %}
+                        {% if ligneSession['lot'] == "Chauffage" and ligneSession['systeme'] == "Emétteur" %}
+                        <tr>
+                            <td style="border:1px solid black"></td>
+                            <td style="border:1px solid black">{{ ligneSession['descritpion'] }}</td>
+                            <td style="text-align:center; border:1px solid black">{{ ligneSession['unite'] }}</td>
+                            <td style="text-align:center; border:1px solid black">{{ ligneSession['quantite'] }}</td>
+                            <td style="border:1px solid black"></td>
+                            <td style="border:1px solid black"></td>
+                        </tr>
+                        {% endif %}
+                        {% endfor %}
+                        {% endif %}
+                            <tr>
+                                <td colspan="4" class="sousTotal" style="text-align:right; border:1px solid black; font-weight: bold;">Sous Total</td>
+                                <td style="border:1px solid black"></td>
+                                <td style="border:1px solid black"></td>
+                            </tr>
+                {% elseif lot == "Plomberie" %} 
+                    <tr>
+                        <td style="border:1px solid black; background-color:grey">{{ countLot }}</td>
+                        <td style="border:1px solid black; background-color:grey">INSTALLATION DE PLOMBERIE</td>
+                        <td style="border:1px solid black; background-color:grey"></td>
+                        <td style="border:1px solid black; background-color:grey"></td>
+                        <td style="border:1px solid black"></td>
+                        <td style="border:1px solid black"></td>
+                    </tr>
+                    {% if lot == "Plomberie" and lot.systemes[0] == "Générateur" %}
+                        <tr>
+                            <td style="border:1px solid black">{{ countLot }}.4</td>
+                            <td style="border:1px solid black">PRODUCTION ECS</td>
+                            <td style="border:1px solid black"></td>
+                            <td style="border:1px solid black"></td>
+                            <td style="border:1px solid black"></td>
+                            <td style="border:1px solid black"></td>
+                        </tr>
+                    {% endif %}
+                        {% for prod in cctp.produits %}
+                            {% if prod.systeme == "Générateur" and prod.lot == "Plomberie" and prod != "Normes Plomberie/Générateur" %} 
+                            {% set counter = ( counter|default(0) ) + 1 %}
+                                {% for docs in prod.docfinals|filter(docs => docs.cctpId == cctp.id) %}  
+                                    {% if docs.quantite != null and docs.localisation == null and docs.type == null %}         
+                                        <tr>
+                                            <td style="border:1px solid black">{{ countLot }}.4.{{ counter }}</td>
+                                            <td style="border:1px solid black">{{ prod }}</td>
+                                            <td style="text-align:center; border:1px solid black">{{ prod.unite }}</td>
+                                            <td style="text-align:center; border:1px solid black">{{ docs.quantite }}</td>
+                                            <td style="border:1px solid black"></td>
+                                            <td style="border:1px solid black"></td>
+                                        </tr>
+                                    {% endif %}
+                                {% endfor %}
+                                    {% if prod.docfinals|length < 2 %}
+                                        {% for docs in prod.docfinals|filter(docs => docs.cctpId == cctp.id) %}
+                                            {% if docs.localisation != null and docs.type == null %}
+                                                <tr>
+                                                    <td style="border:1px solid black">{{ countLot }}.4.{{ counter }}</td>
+                                                    <td style="border:1px solid black">{{ prod }}</td>
+                                                    <td style="text-align:center; border:1px solid black">{{ prod.unite }}</td>
+                                                    <td style="border:1px solid black"></td>
+                                                    <td style="border:1px solid black"></td>
+                                                    <td style="border:1px solid black"></td> 
+                                                </tr> 
+                                                <tr>
+                                                    <td style="border:1px solid black"></td>
+                                                    <td style="border:1px solid black">{{ docs.localisation }}</td>
+                                                    <td style="text-align:center; border:1px solid black">{{ prod.unite }}</td>
+                                                    <td style="text-align:center; border:1px solid black">{{ docs.quantite }}</td>
+                                                    <td style="border:1px solid black"></td>
+                                                    <td style="border:1px solid black"></td>   
+                                                </tr>
+                                            {% elseif docs.localisation != null and docs.type != null %}
+                                                <tr>
+                                                    <td style="border:1px solid black">{{ countLot }}.4.{{ counter }}</td>
+                                                    <td style="border:1px solid black">{{ prod }}</td>
+                                                    <td style="text-align:center; border:1px solid black">{{ prod.unite }}</td>
+                                                    <td style="border:1px solid black"></td>
+                                                    <td style="border:1px solid black"></td>
+                                                    <td style="border:1px solid black"></td> 
+                                                </tr>
+                                                <tr>
+                                                    <td style="border:1px solid black"></td>
+                                                    <td style="border:1px solid black">{{ docs.localisation }}</td>
+                                                    <td style="border:1px solid black"></td>
+                                                    <td style="border:1px solid black"></td>
+                                                    <td style="border:1px solid black"></td>
+                                                    <td style="border:1px solid black"></td>
+                                                    
+                                                </tr>
+                                                <tr>
+                                                    <td style="border:1px solid black"></td>
+                                                    <td style="border:1px solid black">{{ docs.type }}</td>
+                                                    <td style="text-align:center; border:1px solid black">{{ prod.unite }}</td>
+                                                    <td style="text-align:center; border:1px solid black">{{ docs.quantite }}</td>
+                                                    <td style="border:1px solid black"></td>
+                                                    <td style="border:1px solid black"></td>   
+                                                </tr>
+                                            {% endif %}
+                                        {% endfor %}
+                                    {% else %}
+                                        {% for docs in prod.docfinals|filter(docs => docs.cctpId == cctp.id)|slice(0,1) %}
+                                        {% set loca = docs.localisation %}
+                                        {% set countLoop = 0 %}
+                                        <tr>
+                                            <td style="border:1px solid black">{{ countLot }}.4.{{ counter }}</td>
+                                            <td style="border:1px solid black">{{ prod }}</td>
+                                            <td style="text-align:center; border:1px solid black">{{ prod.unite }}</td>
+                                            <td style="border:1px solid black"></td>
+                                            <td style="border:1px solid black"></td>
+                                            <td style="border:1px solid black"></td>    
+                                        </tr>
+                                        {% endfor %} 
+                                        {% for docs in prod.docfinals|filter(docs => docs.cctpId == cctp.id) %}
+                                            {% if docs.localisation != null and docs.type == null %} 
+                                                <tr>
+                                                    <td style="border:1px solid black"></td>
+                                                    <td style="border:1px solid black">{{ docs.localisation }}</td>
+                                                    <td style="text-align:center; border:1px solid black">{{ prod.unite }}</td>
+                                                    <td style="text-align:center; border:1px solid black">{{ docs.quantite }}</td>
+                                                    <td style="border:1px solid black"></td>
+                                                    <td style="border:1px solid black"></td>   
+                                                </tr>  
+                                            {% elseif docs.localisation != null and docs.type != null %}
+                                                {% if loca == docs.localisation and countLoop == 0 %}
+                                                <tr>
+                                                    <td style="border:1px solid black"></td>
+                                                    <td style="border:1px solid black">{{docs.localisation }}</td>
+                                                    <td style="border:1px solid black"></td>
+                                                    <td style="border:1px solid black"></td>
+                                                    <td style="border:1px solid black"></td>
+                                                    <td style="border:1px solid black"></td>    
+                                                </tr>    
+                                                <tr>
+                                                    <td style="border:1px solid black"></td>
+                                                    <td style="border:1px solid black">{{ docs.type }}</td>
+                                                    <td style="text-align:center; border:1px solid black">{{ prod.unite }}</td>
+                                                    <td style="text-align:center; border:1px solid black">{{ docs.quantite }}</td>
+                                                    <td style="border:1px solid black"></td>
+                                                    <td style="border:1px solid black"></td>    
+                                                </tr>
+                                                {% set countLoop = 1 %}
+                                                {% elseif loca == docs.localisation and countLoop == 1 %}
+                                                <tr>
+                                                    <td style="border:1px solid black"></td>
+                                                    <td style="border:1px solid black">{{ docs.type }}</td>
+                                                    <td style="text-align:center; border:1px solid black">{{ prod.unite }}</td>
+                                                    <td style="text-align:center; border:1px solid black">{{ docs.quantite }}</td>
+                                                    <td style="border:1px solid black"></td>
+                                                    <td style="border:1px solid black"></td>    
+                                                </tr>
+                                                {% elseif loca != docs.localisation %}
+                                                <tr>
+                                                    <td style="border:1px solid black"></td>
+                                                    <td style="border:1px solid black">{{docs.localisation }}</td>
+                                                    <td style="border:1px solid black"></td>
+                                                    <td style="border:1px solid black"></td>
+                                                    <td style="border:1px solid black"></td>
+                                                    <td style="border:1px solid black"></td>    
+                                                </tr>    
+                                                <tr>
+                                                    <td style="border:1px solid black"></td>
+                                                    <td style="border:1px solid black">{{ docs.type }}</td>
+                                                    <td style="text-align:center; border:1px solid black">{{ prod.unite }}</td>
+                                                    <td style="text-align:center; border:1px solid black">{{ docs.quantite }}</td>
+                                                    <td style="border:1px solid black"></td>
+                                                    <td style="border:1px solid black"></td>    
+                                                </tr>
+                                                {% set loca = docs.localisation %}
+                                                {% endif %}
+                                            {% endif %}
+                                        {% endfor %}
+                                    {% endif %}
+                            {% endif %}
+                        {% endfor %}
+
+                        {% if (panier != null) %}
+                        {% for ligneSession in panier %}
+                        {% if ligneSession['lot'] == "Plomberie" and ligneSession['systeme'] == "Générateur" %}
+                        <tr>
+                            <td style="border:1px solid black"></td>
+                            <td style="border:1px solid black">{{ ligneSession['descritpion'] }}</td>
+                            <td style="text-align:center; border:1px solid black">{{ ligneSession['unite'] }}</td>
+                            <td style="text-align:center; border:1px solid black">{{ ligneSession['quantite'] }}</td>
+                            <td style="border:1px solid black"></td>
+                            <td style="border:1px solid black"></td>
+                        </tr>
+                        {% endif %}
+                        {% endfor %}
+                        {% endif %}
+
+                    {% if lot == "Plomberie" and lot.systemes[1] == "Distribution" %}
+                        <tr>
+                            <td style="border:1px solid black">{{ countLot }}.5</td>
+                            <td style="border:1px solid black">DISTRIBUTION</td>
+                            <td style="border:1px solid black"></td>
+                            <td style="border:1px solid black"></td>
+                            <td style="border:1px solid black"></td>
+                            <td style="border:1px solid black"></td>
+                        </tr>
+                    {% endif %}
+                        {% for prod in cctp.produits %}
+                            {% if prod.systeme == "Distribution" and prod.lot == "Plomberie" and prod != "Normes Plomberie/Distribution" %} 
+                            {% set counter = ( counter|default(0) ) + 1 %}
+                                {% for docs in prod.docfinals|filter(docs => docs.cctpId == cctp.id) %}  
+                                    {% if docs.quantite != null and docs.localisation == null and docs.type == null %}         
+                                        <tr>
+                                            <td style="border:1px solid black">{{ countLot }}.5.{{ counter }}</td>
+                                            <td style="border:1px solid black">{{ prod }}</td>
+                                            <td style="text-align:center; border:1px solid black">{{ prod.unite }}</td>
+                                            <td style="text-align:center; border:1px solid black">{{ docs.quantite }}</td>
+                                            <td style="border:1px solid black"></td>
+                                            <td style="border:1px solid black"></td>
+                                        </tr>
+                                    {% endif %}
+                                {% endfor %}
+                                    {% if prod.docfinals|length < 2 %}
+                                        {% for docs in prod.docfinals|filter(docs => docs.cctpId == cctp.id) %}
+                                            {% if docs.localisation != null and docs.type == null %}
+                                                <tr>
+                                                    <td style="border:1px solid black">{{ countLot }}.5.{{ counter }}</td>
+                                                    <td style="border:1px solid black">{{ prod }}</td>
+                                                    <td style="text-align:center; border:1px solid black">{{ prod.unite }}</td>
+                                                    <td style="border:1px solid black"></td>
+                                                    <td style="border:1px solid black"></td>
+                                                    <td style="border:1px solid black"></td> 
+                                                </tr> 
+                                                <tr>
+                                                    <td style="border:1px solid black"></td>
+                                                    <td style="border:1px solid black">{{ docs.localisation }}</td>
+                                                    <td style="text-align:center; border:1px solid black">{{ prod.unite }}</td>
+                                                    <td style="text-align:center; border:1px solid black">{{ docs.quantite }}</td>
+                                                    <td style="border:1px solid black"></td>
+                                                    <td style="border:1px solid black"></td>   
+                                                </tr>
+                                            {% elseif docs.localisation != null and docs.type != null %}
+                                                <tr>
+                                                    <td style="border:1px solid black">{{ countLot }}.5.{{ counter }}</td>
+                                                    <td style="border:1px solid black">{{ prod }}</td>
+                                                    <td style="text-align:center; border:1px solid black">{{ prod.unite }}</td>
+                                                    <td style="border:1px solid black"></td>
+                                                    <td style="border:1px solid black"></td>
+                                                    <td style="border:1px solid black"></td> 
+                                                </tr>
+                                                <tr>
+                                                    <td style="border:1px solid black"></td>
+                                                    <td style="border:1px solid black">{{ docs.localisation }}</td>
+                                                    <td style="border:1px solid black"></td>
+                                                    <td style="border:1px solid black"></td>
+                                                    <td style="border:1px solid black"></td>
+                                                    <td style="border:1px solid black"></td>
+                                                    
+                                                </tr>
+                                                <tr>
+                                                    <td style="border:1px solid black"></td>
+                                                    <td style="border:1px solid black">{{ docs.type }}</td>
+                                                    <td style="text-align:center; border:1px solid black">{{ prod.unite }}</td>
+                                                    <td style="text-align:center; border:1px solid black">{{ docs.quantite }}</td>
+                                                    <td style="border:1px solid black"></td>
+                                                    <td style="border:1px solid black"></td>   
+                                                </tr>
+                                            {% endif %}
+                                        {% endfor %}
+                                    {% else %}
+                                        {% for docs in prod.docfinals|filter(docs => docs.cctpId == cctp.id)|slice(0,1) %}
+                                        {% set loca = docs.localisation %}
+                                        {% set countLoop = 0 %}
+                                        <tr>
+                                            <td style="border:1px solid black">{{ countLot }}.5.{{ counter }}</td>
+                                            <td style="border:1px solid black">{{ prod }}</td>
+                                            <td style="text-align:center; border:1px solid black">{{ prod.unite }}</td>
+                                            <td style="border:1px solid black"></td>
+                                            <td style="border:1px solid black"></td>
+                                            <td style="border:1px solid black"></td>    
+                                        </tr> 
+                                        {% endfor %}
+                                        {% for docs in prod.docfinals|filter(docs => docs.cctpId == cctp.id) %}
+                                            {% if docs.localisation != null and docs.type == null %} 
+                                                <tr>
+                                                    <td style="border:1px solid black"></td>
+                                                    <td style="border:1px solid black">{{ docs.localisation }}</td>
+                                                    <td style="text-align:center; border:1px solid black">{{ prod.unite }}</td>
+                                                    <td style="text-align:center; border:1px solid black">{{ docs.quantite }}</td>
+                                                    <td style="border:1px solid black"></td>
+                                                    <td style="border:1px solid black"></td>   
+                                                </tr>  
+                                            {% elseif docs.localisation != null and docs.type != null %}
+                                                {% if loca == docs.localisation and countLoop == 0 %}
+                                                <tr>
+                                                    <td style="border:1px solid black"></td>
+                                                    <td style="border:1px solid black">{{docs.localisation }}</td>
+                                                    <td style="border:1px solid black"></td>
+                                                    <td style="border:1px solid black"></td>
+                                                    <td style="border:1px solid black"></td>
+                                                    <td style="border:1px solid black"></td>    
+                                                </tr>    
+                                                <tr>
+                                                    <td style="border:1px solid black"></td>
+                                                    <td style="border:1px solid black">{{ docs.type }}</td>
+                                                    <td style="text-align:center; border:1px solid black">{{ prod.unite }}</td>
+                                                    <td style="text-align:center; border:1px solid black">{{ docs.quantite }}</td>
+                                                    <td style="border:1px solid black"></td>
+                                                    <td style="border:1px solid black"></td>    
+                                                </tr>
+                                                {% set countLoop = 1 %}
+                                                {% elseif loca == docs.localisation and countLoop == 1 %}
+                                                <tr>
+                                                    <td style="border:1px solid black"></td>
+                                                    <td style="border:1px solid black">{{ docs.type }}</td>
+                                                    <td style="text-align:center; border:1px solid black">{{ prod.unite }}</td>
+                                                    <td style="text-align:center; border:1px solid black">{{ docs.quantite }}</td>
+                                                    <td style="border:1px solid black"></td>
+                                                    <td style="border:1px solid black"></td>    
+                                                </tr>
+                                                {% elseif loca != docs.localisation %}
+                                                <tr>
+                                                    <td style="border:1px solid black"></td>
+                                                    <td style="border:1px solid black">{{docs.localisation }}</td>
+                                                    <td style="border:1px solid black"></td>
+                                                    <td style="border:1px solid black"></td>
+                                                    <td style="border:1px solid black"></td>
+                                                    <td style="border:1px solid black"></td>    
+                                                </tr>    
+                                                <tr>
+                                                    <td style="border:1px solid black"></td>
+                                                    <td style="border:1px solid black">{{ docs.type }}</td>
+                                                    <td style="text-align:center; border:1px solid black">{{ prod.unite }}</td>
+                                                    <td style="text-align:center; border:1px solid black">{{ docs.quantite }}</td>
+                                                    <td style="border:1px solid black"></td>
+                                                    <td style="border:1px solid black"></td>    
+                                                </tr>
+                                                {% set loca = docs.localisation %}
+                                                {% endif %}
+                                            {% endif %}
+                                        {% endfor %}
+                                    {% endif %}
+                            {% endif %}
+                        {% endfor %}
+
+                        {% if (panier != null) %}
+                        {% for ligneSession in panier %}
+                        {% if ligneSession['lot'] == "Plomberie" and ligneSession['systeme'] == "Distribution" %}
+                        <tr>
+                            <td style="border:1px solid black"></td>
+                            <td style="border:1px solid black">{{ ligneSession['descritpion'] }}</td>
+                            <td style="text-align:center; border:1px solid black">{{ ligneSession['unite'] }}</td>
+                            <td style="text-align:center; border:1px solid black">{{ ligneSession['quantite'] }}</td>
+                            <td style="border:1px solid black"></td>
+                            <td style="border:1px solid black"></td>
+                        </tr>
+                        {% endif %}
+                        {% endfor %}
+                        {% endif %}
+
+                    {% if lot == "Plomberie" and lot.systemes[2] == "Emétteur" %}
+                        <tr>
+                            <td style="border:1px solid black">{{ countLot }}.6</td>
+                            <td style="border:1px solid black">APPAREILS SANITAIRES</td>
+                            <td style="border:1px solid black"></td>
+                            <td style="border:1px solid black"></td>
+                            <td style="border:1px solid black"></td>
+                            <td style="border:1px solid black"></td>
+                        </tr>
+                    {% endif %}
+                        {% for prod in cctp.produits %}
+                            {% if prod.systeme == "Emétteur" and prod.lot == "Plomberie" and prod != "Normes Plomberie/Emetteur" %} 
+                            {% set counter = ( counter|default(0) ) + 1 %}
+                                {% for docs in prod.docfinals|filter(docs => docs.cctpId == cctp.id) %}  
+                                    {% if docs.quantite != null and docs.localisation == null and docs.type == null %}         
+                                        <tr>
+                                            <td style="border:1px solid black">{{ countLot }}.6.{{ counter }}</td>
+                                            <td style="border:1px solid black">{{ prod }}</td>
+                                            <td style="text-align:center; border:1px solid black">{{ prod.unite }}</td>
+                                            <td style="text-align:center; border:1px solid black">{{ docs.quantite }}</td>
+                                            <td style="border:1px solid black"></td>
+                                            <td style="border:1px solid black"></td>
+                                        </tr>
+                                    {% endif %}
+                                {% endfor %}
+                                    {% if prod.docfinals|length < 2 %}
+                                        {% for docs in prod.docfinals|filter(docs => docs.cctpId == cctp.id) %}
+                                            {% if docs.localisation != null and docs.type == null %}
+                                                <tr>
+                                                    <td style="border:1px solid black">{{ countLot }}.6.{{ counter }}</td>
+                                                    <td style="border:1px solid black">{{ prod }}</td>
+                                                    <td style="text-align:center; border:1px solid black">{{ prod.unite }}</td>
+                                                    <td style="border:1px solid black"></td>
+                                                    <td style="border:1px solid black"></td>
+                                                    <td style="border:1px solid black"></td> 
+                                                </tr> 
+                                                <tr>
+                                                    <td style="border:1px solid black"></td>
+                                                    <td style="border:1px solid black">{{ docs.localisation }}</td>
+                                                    <td style="text-align:center; border:1px solid black">{{ prod.unite }}</td>
+                                                    <td style="text-align:center; border:1px solid black">{{ docs.quantite }}</td>
+                                                    <td style="border:1px solid black"></td>
+                                                    <td style="border:1px solid black"></td>   
+                                                </tr>
+                                            {% elseif docs.localisation != null and docs.type != null %}
+                                                <tr>
+                                                    <td style="border:1px solid black">{{ countLot }}.6.{{ counter }}</td>
+                                                    <td style="border:1px solid black">{{ prod }}</td>
+                                                    <td style="text-align:center; border:1px solid black">{{ prod.unite }}</td>
+                                                    <td style="border:1px solid black"></td>
+                                                    <td style="border:1px solid black"></td>
+                                                    <td style="border:1px solid black"></td> 
+                                                </tr>
+                                                <tr>
+                                                    <td style="border:1px solid black"></td>
+                                                    <td style="border:1px solid black">{{ docs.localisation }}</td>
+                                                    <td style="border:1px solid black"></td>
+                                                    <td style="border:1px solid black"></td>
+                                                    <td style="border:1px solid black"></td>
+                                                    <td style="border:1px solid black"></td>
+                                                    
+                                                </tr>
+                                                <tr>
+                                                    <td style="border:1px solid black"></td>
+                                                    <td style="border:1px solid black">{{ docs.type }}</td>
+                                                    <td style="text-align:center; border:1px solid black">{{ prod.unite }}</td>
+                                                    <td style="text-align:center; border:1px solid black">{{ docs.quantite }}</td>
+                                                    <td style="border:1px solid black"></td>
+                                                    <td style="border:1px solid black"></td>   
+                                                </tr>
+                                            {% endif %}
+                                        {% endfor %}
+                                    {% else %}
+                                        {% for docs in prod.docfinals|filter(docs => docs.cctpId == cctp.id)|slice(0,1) %}
+                                        {% set loca = docs.localisation %}
+                                        {% set countLoop = 0 %}
+                                        <tr>
+                                            <td style="border:1px solid black">{{ countLot }}.6.{{ counter }}</td>
+                                            <td style="border:1px solid black">{{ prod }}</td>
+                                            <td style="text-align:center; border:1px solid black">{{ prod.unite }}</td>
+                                            <td style="border:1px solid black"></td>
+                                            <td style="border:1px solid black"></td>
+                                            <td style="border:1px solid black"></td>    
+                                        </tr> 
+                                        {% endfor %}
+                                        {% for docs in prod.docfinals|filter(docs => docs.cctpId == cctp.id) %}
+                                            {% if docs.localisation != null and docs.type == null %} 
+                                                <tr>
+                                                    <td style="border:1px solid black"></td>
+                                                    <td style="border:1px solid black">{{ docs.localisation }}</td>
+                                                    <td style="text-align:center; border:1px solid black">{{ prod.unite }}</td>
+                                                    <td style="text-align:center; border:1px solid black">{{ docs.quantite }}</td>
+                                                    <td style="border:1px solid black"></td>
+                                                    <td style="border:1px solid black"></td>   
+                                                </tr>  
+                                            {% elseif docs.localisation != null and docs.type != null %}
+                                                {% if loca == docs.localisation and countLoop == 0 %}
+                                                <tr>
+                                                    <td style="border:1px solid black"></td>
+                                                    <td style="border:1px solid black">{{docs.localisation }}</td>
+                                                    <td style="border:1px solid black"></td>
+                                                    <td style="border:1px solid black"></td>
+                                                    <td style="border:1px solid black"></td>
+                                                    <td style="border:1px solid black"></td>    
+                                                </tr>    
+                                                <tr>
+                                                    <td style="border:1px solid black"></td>
+                                                    <td style="border:1px solid black">{{ docs.type }}</td>
+                                                    <td style="text-align:center; border:1px solid black">{{ prod.unite }}</td>
+                                                    <td style="text-align:center; border:1px solid black">{{ docs.quantite }}</td>
+                                                    <td style="border:1px solid black"></td>
+                                                    <td style="border:1px solid black"></td>    
+                                                </tr>
+                                                {% set countLoop = 1 %}
+                                                {% elseif loca == docs.localisation and countLoop == 1 %}
+                                                <tr>
+                                                    <td style="border:1px solid black"></td>
+                                                    <td style="border:1px solid black">{{ docs.type }}</td>
+                                                    <td style="text-align:center; border:1px solid black">{{ prod.unite }}</td>
+                                                    <td style="text-align:center; border:1px solid black">{{ docs.quantite }}</td>
+                                                    <td style="border:1px solid black"></td>
+                                                    <td style="border:1px solid black"></td>    
+                                                </tr>
+                                                {% elseif loca != docs.localisation %}
+                                                <tr>
+                                                    <td style="border:1px solid black"></td>
+                                                    <td style="border:1px solid black">{{docs.localisation }}</td>
+                                                    <td style="border:1px solid black"></td>
+                                                    <td style="border:1px solid black"></td>
+                                                    <td style="border:1px solid black"></td>
+                                                    <td style="border:1px solid black"></td>    
+                                                </tr>    
+                                                <tr>
+                                                    <td style="border:1px solid black"></td>
+                                                    <td style="border:1px solid black">{{ docs.type }}</td>
+                                                    <td style="text-align:center; border:1px solid black">{{ prod.unite }}</td>
+                                                    <td style="text-align:center; border:1px solid black">{{ docs.quantite }}</td>
+                                                    <td style="border:1px solid black"></td>
+                                                    <td style="border:1px solid black"></td>    
+                                                </tr>
+                                                {% set loca = docs.localisation %}
+                                                {% endif %}
+                                            {% endif %}
+                                        {% endfor %}
+                                    {% endif %}
+                            {% endif %}
+                        {% endfor %}
+
+                        {% if (panier != null) %}
+                        {% for ligneSession in panier %}
+                        {% if ligneSession['lot'] == "Plomberie" and ligneSession['systeme'] == "Emétteur" %}
+                        <tr>
+                            <td style="border:1px solid black"></td>
+                            <td style="border:1px solid black">{{ ligneSession['descritpion'] }}</td>
+                            <td style="text-align:center; border:1px solid black">{{ ligneSession['unite'] }}</td>
+                            <td style="text-align:center; border:1px solid black">{{ ligneSession['quantite'] }}</td>
+                            <td style="border:1px solid black"></td>
+                            <td style="border:1px solid black"></td>
+                        </tr>
+                        {% endif %}
+                        {% endfor %}
+                        {% endif %}
+
+                            <tr>
+                                <td colspan="4" class="sousTotal" style="text-align:right; border:1px solid black; font-weight: bold;">Sous Total</td>
+                                <td style="border:1px solid black"></td>
+                                <td style="border:1px solid black"></td>
+                            </tr>
+                {% elseif lot == "Ventilation" %} 
+                    <tr>
+                        <td style="border:1px solid black; background-color:grey">{{ countLot }}</td>
+                        <td style="border:1px solid black; background-color:grey">INSTALLATION DE VENTILATION</td>
+                        <td style="border:1px solid black; background-color:grey"></td>
+                        <td style="border:1px solid black; background-color:grey"></td>
+                        <td style="border:1px solid black"></td>
+                        <td style="border:1px solid black"></td>
+                    </tr>
+                    {% if lot == "Ventilation" and lot.systemes[0] == "Générateur" %}
+                        <tr>
+                            <td style="border:1px solid black">{{ countLot }}.3</td>
+                            <td style="border:1px solid black">EXTRACTEURS</td>
+                            <td style="border:1px solid black"></td>
+                            <td style="border:1px solid black"></td>
+                            <td style="border:1px solid black"></td>
+                            <td style="border:1px solid black"></td>
+                        </tr>
+                    {% endif %}
+                        {% for prod in cctp.produits %}
+                            {% if prod.systeme == "Générateur" and prod.lot == "Ventilation" and prod != "Normes Ventilation/Générateur" %} 
+                            {% set counter = ( counter|default(0) ) + 1 %}
+                                {% for docs in prod.docfinals|filter(docs => docs.cctpId == cctp.id) %}  
+                                    {% if docs.quantite != null and docs.localisation == null and docs.type == null %}         
+                                        <tr>
+                                            <td style="border:1px solid black">{{ countLot }}.3.{{ counter }}</td>
+                                            <td style="border:1px solid black">{{ prod }}</td>
+                                            <td style="text-align:center; border:1px solid black">{{ prod.unite }}</td>
+                                            <td style="text-align:center; border:1px solid black">{{ docs.quantite }}</td>
+                                            <td style="border:1px solid black"></td>
+                                            <td style="border:1px solid black"></td>
+                                        </tr>
+                                    {% endif %}
+                                {% endfor %}
+                                    {% if prod.docfinals|length < 2 %}
+                                        {% for docs in prod.docfinals|filter(docs => docs.cctpId == cctp.id) %}
+                                            {% if docs.localisation != null and docs.type == null %}
+                                                <tr>
+                                                    <td style="border:1px solid black">{{ countLot }}.3.{{ counter }}</td>
+                                                    <td style="border:1px solid black">{{ prod }}</td>
+                                                    <td style="text-align:center; border:1px solid black">{{ prod.unite }}</td>
+                                                    <td style="border:1px solid black"></td>
+                                                    <td style="border:1px solid black"></td>
+                                                    <td style="border:1px solid black"></td> 
+                                                </tr> 
+                                                <tr>
+                                                    <td style="border:1px solid black"></td>
+                                                    <td style="border:1px solid black">{{ docs.localisation }}</td>
+                                                    <td style="text-align:center; border:1px solid black">{{ prod.unite }}</td>
+                                                    <td style="text-align:center; border:1px solid black">{{ docs.quantite }}</td>
+                                                    <td style="border:1px solid black"></td>
+                                                    <td style="border:1px solid black"></td>   
+                                                </tr>
+                                            {% elseif docs.localisation != null and docs.type != null %}
+                                                <tr>
+                                                    <td style="border:1px solid black">{{ countLot }}.3.{{ counter }}</td>
+                                                    <td style="border:1px solid black">{{ prod }}</td>
+                                                    <td style="text-align:center; border:1px solid black">{{ prod.unite }}</td>
+                                                    <td style="border:1px solid black"></td>
+                                                    <td style="border:1px solid black"></td>
+                                                    <td style="border:1px solid black"></td> 
+                                                </tr>
+                                                <tr>
+                                                    <td style="border:1px solid black"></td>
+                                                    <td style="border:1px solid black">{{ docs.localisation }}</td>
+                                                    <td style="border:1px solid black"></td>
+                                                    <td style="border:1px solid black"></td>
+                                                    <td style="border:1px solid black"></td>
+                                                    <td style="border:1px solid black"></td>
+                                                    
+                                                </tr>
+                                                <tr>
+                                                    <td style="border:1px solid black"></td>
+                                                    <td style="border:1px solid black">{{ docs.type }}</td>
+                                                    <td style="text-align:center; border:1px solid black">{{ prod.unite }}</td>
+                                                    <td style="text-align:center; border:1px solid black">{{ docs.quantite }}</td>
+                                                    <td style="border:1px solid black"></td>
+                                                    <td style="border:1px solid black"></td>   
+                                                </tr>
+                                            {% endif %}
+                                        {% endfor %}
+                                    {% else %}
+                                        {% for docs in prod.docfinals|filter(docs => docs.cctpId == cctp.id)|slice(0,1) %}
+                                        {% set loca = docs.localisation %}
+                                        {% set countLoop = 0 %}
+                                        <tr>
+                                            <td style="border:1px solid black">{{ countLot }}.3.{{ counter }}</td>
+                                            <td style="border:1px solid black">{{ prod }}</td>
+                                            <td style="text-align:center; border:1px solid black">{{ prod.unite }}</td>
+                                            <td style="border:1px solid black"></td>
+                                            <td style="border:1px solid black"></td>
+                                            <td style="border:1px solid black"></td>    
+                                        </tr>
+                                        {% endfor %} 
+                                        {% for docs in prod.docfinals|filter(docs => docs.cctpId == cctp.id) %}
+                                            {% if docs.localisation != null and docs.type == null %} 
+                                                <tr>
+                                                    <td style="border:1px solid black"></td>
+                                                    <td style="border:1px solid black">{{ docs.localisation }}</td>
+                                                    <td style="text-align:center; border:1px solid black">{{ prod.unite }}</td>
+                                                    <td style="text-align:center; border:1px solid black">{{ docs.quantite }}</td>
+                                                    <td style="border:1px solid black"></td>
+                                                    <td style="border:1px solid black"></td>   
+                                                </tr>  
+                                            {% elseif docs.localisation != null and docs.type != null %}
+                                                {% if loca == docs.localisation and countLoop == 0 %}
+                                                <tr>
+                                                    <td style="border:1px solid black"></td>
+                                                    <td style="border:1px solid black">{{docs.localisation }}</td>
+                                                    <td style="border:1px solid black"></td>
+                                                    <td style="border:1px solid black"></td>
+                                                    <td style="border:1px solid black"></td>
+                                                    <td style="border:1px solid black"></td>    
+                                                </tr>    
+                                                <tr>
+                                                    <td style="border:1px solid black"></td>
+                                                    <td style="border:1px solid black">{{ docs.type }}</td>
+                                                    <td style="text-align:center; border:1px solid black">{{ prod.unite }}</td>
+                                                    <td style="text-align:center; border:1px solid black">{{ docs.quantite }}</td>
+                                                    <td style="border:1px solid black"></td>
+                                                    <td style="border:1px solid black"></td>    
+                                                </tr>
+                                                {% set countLoop = 1 %}
+                                                {% elseif loca == docs.localisation and countLoop == 1 %}
+                                                <tr>
+                                                    <td style="border:1px solid black"></td>
+                                                    <td style="border:1px solid black">{{ docs.type }}</td>
+                                                    <td style="text-align:center; border:1px solid black">{{ prod.unite }}</td>
+                                                    <td style="text-align:center; border:1px solid black">{{ docs.quantite }}</td>
+                                                    <td style="border:1px solid black"></td>
+                                                    <td style="border:1px solid black"></td>    
+                                                </tr>
+                                                {% elseif loca != docs.localisation %}
+                                                <tr>
+                                                    <td style="border:1px solid black"></td>
+                                                    <td style="border:1px solid black">{{docs.localisation }}</td>
+                                                    <td style="border:1px solid black"></td>
+                                                    <td style="border:1px solid black"></td>
+                                                    <td style="border:1px solid black"></td>
+                                                    <td style="border:1px solid black"></td>    
+                                                </tr>    
+                                                <tr>
+                                                    <td style="border:1px solid black"></td>
+                                                    <td style="border:1px solid black">{{ docs.type }}</td>
+                                                    <td style="text-align:center; border:1px solid black">{{ prod.unite }}</td>
+                                                    <td style="text-align:center; border:1px solid black">{{ docs.quantite }}</td>
+                                                    <td style="border:1px solid black"></td>
+                                                    <td style="border:1px solid black"></td>    
+                                                </tr>
+                                                {% set loca = docs.localisation %}
+                                                {% endif %}
+                                            {% endif %}
+                                        {% endfor %}
+                                    {% endif %}
+                            {% endif %}
+                        {% endfor %}
+
+                        {% if (panier != null) %}
+                        {% for ligneSession in panier %}
+                        {% if ligneSession['lot'] == "Ventilation" and ligneSession['systeme'] == "Générateur" %}
+                        <tr>
+                            <td style="border:1px solid black"></td>
+                            <td style="border:1px solid black">{{ ligneSession['descritpion'] }}</td>
+                            <td style="text-align:center; border:1px solid black">{{ ligneSession['unite'] }}</td>
+                            <td style="text-align:center; border:1px solid black">{{ ligneSession['quantite'] }}</td>
+                            <td style="border:1px solid black"></td>
+                            <td style="border:1px solid black"></td>
+                        </tr>
+                        {% endif %}
+                        {% endfor %}
+                        {% endif %}
+
+                    {% if lot == "Ventilation" and lot.systemes[1] == "Distribution" %}
+                        <tr>
+                            <td style="border:1px solid black">{{ countLot }}.4</td>
+                            <td style="border:1px solid black">RESEAUX</td>
+                            <td style="border:1px solid black"></td>
+                            <td style="border:1px solid black"></td>
+                            <td style="border:1px solid black"></td>
+                            <td style="border:1px solid black"></td>
+                        </tr>
+                    {% endif %}
+                        {% for prod in cctp.produits %}
+                            {% if prod.systeme == "Distribution" and prod.lot == "Ventilation" and prod != "Normes Ventilation/Distribution" %} 
+                            {% set counter = ( counter|default(0) ) + 1 %}
+                                {% for docs in prod.docfinals|filter(docs => docs.cctpId == cctp.id) %}  
+                                    {% if docs.quantite != null and docs.localisation == null and docs.type == null %}         
+                                        <tr>
+                                            <td style="border:1px solid black">{{ countLot }}.4.{{ counter }}</td>
+                                            <td style="border:1px solid black">{{ prod }}</td>
+                                            <td style="text-align:center; border:1px solid black">{{ prod.unite }}</td>
+                                            <td style="text-align:center; border:1px solid black">{{ docs.quantite }}</td>
+                                            <td style="border:1px solid black"></td>
+                                            <td style="border:1px solid black"></td>
+                                        </tr>
+                                    {% endif %}
+                                {% endfor %}
+                                    {% if prod.docfinals|length < 2 %}
+                                        {% for docs in prod.docfinals|filter(docs => docs.cctpId == cctp.id) %}
+                                            {% if docs.localisation != null and docs.type == null %}
+                                                <tr>
+                                                    <td style="border:1px solid black">{{ countLot }}.4.{{ counter }}</td>
+                                                    <td style="border:1px solid black">{{ prod }}</td>
+                                                    <td style="text-align:center; border:1px solid black">{{ prod.unite }}</td>
+                                                    <td style="border:1px solid black"></td>
+                                                    <td style="border:1px solid black"></td>
+                                                    <td style="border:1px solid black"></td> 
+                                                </tr> 
+                                                <tr>
+                                                    <td style="border:1px solid black"></td>
+                                                    <td style="border:1px solid black">{{ docs.localisation }}</td>
+                                                    <td style="text-align:center; border:1px solid black">{{ prod.unite }}</td>
+                                                    <td style="text-align:center; border:1px solid black">{{ docs.quantite }}</td>
+                                                    <td style="border:1px solid black"></td>
+                                                    <td style="border:1px solid black"></td>   
+                                                </tr>
+                                            {% elseif docs.localisation != null and docs.type != null %}
+                                                <tr>
+                                                    <td style="border:1px solid black">{{ countLot }}.4.{{ counter }}</td>
+                                                    <td style="border:1px solid black">{{ prod }}</td>
+                                                    <td style="text-align:center; border:1px solid black">{{ prod.unite }}</td>
+                                                    <td style="border:1px solid black"></td>
+                                                    <td style="border:1px solid black"></td>
+                                                    <td style="border:1px solid black"></td> 
+                                                </tr>
+                                                <tr>
+                                                    <td style="border:1px solid black"></td>
+                                                    <td style="border:1px solid black">{{ docs.localisation }}</td>
+                                                    <td style="border:1px solid black"></td>
+                                                    <td style="border:1px solid black"></td>
+                                                    <td style="border:1px solid black"></td>
+                                                    <td style="border:1px solid black"></td>
+                                                    
+                                                </tr>
+                                                <tr>
+                                                    <td style="border:1px solid black"></td>
+                                                    <td style="border:1px solid black">{{ docs.type }}</td>
+                                                    <td style="text-align:center; border:1px solid black">{{ prod.unite }}</td>
+                                                    <td style="text-align:center; border:1px solid black">{{ docs.quantite }}</td>
+                                                    <td style="border:1px solid black"></td>
+                                                    <td style="border:1px solid black"></td>   
+                                                </tr>
+                                            {% endif %}
+                                        {% endfor %}
+                                    {% else %}
+                                        {% for docs in prod.docfinals|filter(docs => docs.cctpId == cctp.id)|slice(0,1) %}
+                                        {% set loca = docs.localisation %}
+                                        {% set countLoop = 0 %}
+                                        <tr>
+                                            <td style="border:1px solid black">{{ countLot }}.4.{{ counter }}</td>
+                                            <td style="border:1px solid black">{{ prod }}</td>
+                                            <td style="text-align:center; border:1px solid black">{{ prod.unite }}</td>
+                                            <td style="border:1px solid black"></td>
+                                            <td style="border:1px solid black"></td>
+                                            <td style="border:1px solid black"></td>    
+                                        </tr> 
+                                        {% endfor %}
+                                        {% for docs in prod.docfinals|filter(docs => docs.cctpId == cctp.id) %}
+                                            {% if docs.localisation != null and docs.type == null %} 
+                                                <tr>
+                                                    <td style="border:1px solid black"></td>
+                                                    <td style="border:1px solid black">{{ docs.localisation }}</td>
+                                                    <td style="text-align:center; border:1px solid black">{{ prod.unite }}</td>
+                                                    <td style="text-align:center; border:1px solid black">{{ docs.quantite }}</td>
+                                                    <td style="border:1px solid black"></td>
+                                                    <td style="border:1px solid black"></td>   
+                                                </tr>  
+                                            {% elseif docs.localisation != null and docs.type != null %}
+                                                {% if loca == docs.localisation and countLoop == 0 %}
+                                                <tr>
+                                                    <td style="border:1px solid black"></td>
+                                                    <td style="border:1px solid black">{{docs.localisation }}</td>
+                                                    <td style="border:1px solid black"></td>
+                                                    <td style="border:1px solid black"></td>
+                                                    <td style="border:1px solid black"></td>
+                                                    <td style="border:1px solid black"></td>    
+                                                </tr>    
+                                                <tr>
+                                                    <td style="border:1px solid black"></td>
+                                                    <td style="border:1px solid black">{{ docs.type }}</td>
+                                                    <td style="text-align:center; border:1px solid black">{{ prod.unite }}</td>
+                                                    <td style="text-align:center; border:1px solid black">{{ docs.quantite }}</td>
+                                                    <td style="border:1px solid black"></td>
+                                                    <td style="border:1px solid black"></td>    
+                                                </tr>
+                                                {% set countLoop = 1 %}
+                                                {% elseif loca == docs.localisation and countLoop == 1 %}
+                                                <tr>
+                                                    <td style="border:1px solid black"></td>
+                                                    <td style="border:1px solid black">{{ docs.type }}</td>
+                                                    <td style="text-align:center; border:1px solid black">{{ prod.unite }}</td>
+                                                    <td style="text-align:center; border:1px solid black">{{ docs.quantite }}</td>
+                                                    <td style="border:1px solid black"></td>
+                                                    <td style="border:1px solid black"></td>    
+                                                </tr>
+                                                {% elseif loca != docs.localisation %}
+                                                <tr>
+                                                    <td style="border:1px solid black"></td>
+                                                    <td style="border:1px solid black">{{docs.localisation }}</td>
+                                                    <td style="border:1px solid black"></td>
+                                                    <td style="border:1px solid black"></td>
+                                                    <td style="border:1px solid black"></td>
+                                                    <td style="border:1px solid black"></td>    
+                                                </tr>    
+                                                <tr>
+                                                    <td style="border:1px solid black"></td>
+                                                    <td style="border:1px solid black">{{ docs.type }}</td>
+                                                    <td style="text-align:center; border:1px solid black">{{ prod.unite }}</td>
+                                                    <td style="text-align:center; border:1px solid black">{{ docs.quantite }}</td>
+                                                    <td style="border:1px solid black"></td>
+                                                    <td style="border:1px solid black"></td>    
+                                                </tr>
+                                                {% set loca = docs.localisation %}
+                                                {% endif %}
+                                            {% endif %}
+                                        {% endfor %}
+                                    {% endif %}
+                            {% endif %}
+                        {% endfor %}
+
+                        {% if (panier != null) %}
+                        {% for ligneSession in panier %}
+                        {% if ligneSession['lot'] == "Ventilation" and ligneSession['systeme'] == "Distribution" %}
+                        <tr>
+                            <td style="border:1px solid black"></td>
+                            <td style="border:1px solid black">{{ ligneSession['descritpion'] }}</td>
+                            <td style="text-align:center; border:1px solid black">{{ ligneSession['unite'] }}</td>
+                            <td style="text-align:center; border:1px solid black">{{ ligneSession['quantite'] }}</td>
+                            <td style="border:1px solid black"></td>
+                            <td style="border:1px solid black"></td>
+                        </tr>
+                        {% endif %}
+                        {% endfor %}
+                        {% endif %}
+
+                    {% if lot == "Ventilation" and lot.systemes[2] == "Emétteur" %}
+                        <tr>
+                            <td style="border:1px solid black">{{ countLot }}.5</td>
+                            <td style="border:1px solid black">TERMINAUX</td>
+                            <td style="border:1px solid black"></td>
+                            <td style="border:1px solid black"></td>
+                            <td style="border:1px solid black"></td>
+                            <td style="border:1px solid black"></td>
+                        </tr>
+                    {% endif %}
+                        {% for prod in cctp.produits %}
+                            {% if prod.systeme == "Emétteur" and prod.lot == "Ventilation" and prod != "Normes Ventilation/Emetteur" %} 
+                            {% set counter = ( counter|default(0) ) + 1 %}
+                                {% for docs in prod.docfinals|filter(docs => docs.cctpId == cctp.id) %}  
+                                    {% if docs.quantite != null and docs.localisation == null and docs.type == null %}         
+                                        <tr>
+                                            <td style="border:1px solid black">{{ countLot }}.5.{{ counter }}</td>
+                                            <td style="border:1px solid black">{{ prod }}</td>
+                                            <td style="text-align:center; border:1px solid black">{{ prod.unite }}</td>
+                                            <td style="text-align:center; border:1px solid black">{{ docs.quantite }}</td>
+                                            <td style="border:1px solid black"></td>
+                                            <td style="border:1px solid black"></td>
+                                        </tr>
+                                    {% endif %}
+                                {% endfor %}
+                                    {% if prod.docfinals|length < 2 %}
+                                        {% for docs in prod.docfinals|filter(docs => docs.cctpId == cctp.id) %}
+                                            {% if docs.localisation != null and docs.type == null %}
+                                                <tr>
+                                                    <td style="border:1px solid black">{{ countLot }}.5.{{ counter }}</td>
+                                                    <td style="border:1px solid black">{{ prod }}</td>
+                                                    <td style="text-align:center; border:1px solid black">{{ prod.unite }}</td>
+                                                    <td style="border:1px solid black"></td>
+                                                    <td style="border:1px solid black"></td>
+                                                    <td style="border:1px solid black"></td> 
+                                                </tr> 
+                                                <tr>
+                                                    <td style="border:1px solid black"></td>
+                                                    <td style="border:1px solid black">{{ docs.localisation }}</td>
+                                                    <td style="text-align:center; border:1px solid black">{{ prod.unite }}</td>
+                                                    <td style="text-align:center; border:1px solid black">{{ docs.quantite }}</td>
+                                                    <td style="border:1px solid black"></td>
+                                                    <td style="border:1px solid black"></td>   
+                                                </tr>
+                                            {% elseif docs.localisation != null and docs.type != null %}
+                                                <tr>
+                                                    <td style="border:1px solid black">{{ countLot }}.5.{{ counter }}</td>
+                                                    <td style="border:1px solid black">{{ prod }}</td>
+                                                    <td style="text-align:center; border:1px solid black">{{ prod.unite }}</td>
+                                                    <td style="border:1px solid black"></td>
+                                                    <td style="border:1px solid black"></td>
+                                                    <td style="border:1px solid black"></td> 
+                                                </tr>
+                                                <tr>
+                                                    <td style="border:1px solid black"></td>
+                                                    <td style="border:1px solid black">{{ docs.localisation }}</td>
+                                                    <td style="border:1px solid black"></td>
+                                                    <td style="border:1px solid black"></td>
+                                                    <td style="border:1px solid black"></td>
+                                                    <td style="border:1px solid black"></td>
+                                                    
+                                                </tr>
+                                                <tr>
+                                                    <td style="border:1px solid black"></td>
+                                                    <td style="border:1px solid black">{{ docs.type }}</td>
+                                                    <td style="text-align:center; border:1px solid black">{{ prod.unite }}</td>
+                                                    <td style="text-align:center; border:1px solid black">{{ docs.quantite }}</td>
+                                                    <td style="border:1px solid black"></td>
+                                                    <td style="border:1px solid black"></td>   
+                                                </tr>
+                                            {% endif %}
+                                        {% endfor %}
+                                    {% else %}
+                                        {% for docs in prod.docfinals|filter(docs => docs.cctpId == cctp.id)|slice(0,1) %}
+                                        {% set loca = docs.localisation %}
+                                        {% set countLoop = 0 %}
+                                        <tr>
+                                            <td style="border:1px solid black">{{ countLot }}.5.{{ counter }}</td>
+                                            <td style="border:1px solid black">{{ prod }}</td>
+                                            <td style="text-align:center; border:1px solid black">{{ prod.unite }}</td>
+                                            <td style="border:1px solid black"></td>
+                                            <td style="border:1px solid black"></td>
+                                            <td style="border:1px solid black"></td>    
+                                        </tr>
+                                        {% endfor %} 
+                                        {% for docs in prod.docfinals|filter(docs => docs.cctpId == cctp.id) %}
+                                            {% if docs.localisation != null and docs.type == null %} 
+                                                <tr>
+                                                    <td style="border:1px solid black"></td>
+                                                    <td style="border:1px solid black">{{ docs.localisation }}</td>
+                                                    <td style="text-align:center; border:1px solid black">{{ prod.unite }}</td>
+                                                    <td style="text-align:center; border:1px solid black">{{ docs.quantite }}</td>
+                                                    <td style="border:1px solid black"></td>
+                                                    <td style="border:1px solid black"></td>   
+                                                </tr>  
+                                            {% elseif docs.localisation != null and docs.type != null %}
+                                                {% if loca == docs.localisation and countLoop == 0 %}
+                                                <tr>
+                                                    <td style="border:1px solid black"></td>
+                                                    <td style="border:1px solid black">{{docs.localisation }}</td>
+                                                    <td style="border:1px solid black"></td>
+                                                    <td style="border:1px solid black"></td>
+                                                    <td style="border:1px solid black"></td>
+                                                    <td style="border:1px solid black"></td>    
+                                                </tr>    
+                                                <tr>
+                                                    <td style="border:1px solid black"></td>
+                                                    <td style="border:1px solid black">{{ docs.type }}</td>
+                                                    <td style="text-align:center; border:1px solid black">{{ prod.unite }}</td>
+                                                    <td style="text-align:center; border:1px solid black">{{ docs.quantite }}</td>
+                                                    <td style="border:1px solid black"></td>
+                                                    <td style="border:1px solid black"></td>    
+                                                </tr>
+                                                {% set countLoop = 1 %}
+                                                {% elseif loca == docs.localisation and countLoop == 1 %}
+                                                <tr>
+                                                    <td style="border:1px solid black"></td>
+                                                    <td style="border:1px solid black">{{ docs.type }}</td>
+                                                    <td style="text-align:center; border:1px solid black">{{ prod.unite }}</td>
+                                                    <td style="text-align:center; border:1px solid black">{{ docs.quantite }}</td>
+                                                    <td style="border:1px solid black"></td>
+                                                    <td style="border:1px solid black"></td>    
+                                                </tr>
+                                                {% elseif loca != docs.localisation %}
+                                                <tr>
+                                                    <td style="border:1px solid black"></td>
+                                                    <td style="border:1px solid black">{{docs.localisation }}</td>
+                                                    <td style="border:1px solid black"></td>
+                                                    <td style="border:1px solid black"></td>
+                                                    <td style="border:1px solid black"></td>
+                                                    <td style="border:1px solid black"></td>    
+                                                </tr>    
+                                                <tr>
+                                                    <td style="border:1px solid black"></td>
+                                                    <td style="border:1px solid black">{{ docs.type }}</td>
+                                                    <td style="text-align:center; border:1px solid black">{{ prod.unite }}</td>
+                                                    <td style="text-align:center; border:1px solid black">{{ docs.quantite }}</td>
+                                                    <td style="border:1px solid black"></td>
+                                                    <td style="border:1px solid black"></td>    
+                                                </tr>
+                                                {% set loca = docs.localisation %}
+                                                {% endif %}
+                                            {% endif %}
+                                        {% endfor %}
+                                    {% endif %}
+                            {% endif %}
+                        {% endfor %}
+
+                        {% if (panier != null) %}
+                        {% for ligneSession in panier %}
+                        {% if ligneSession['lot'] == "Ventilation" and ligneSession['systeme'] == "Emétteur" %}
+                        <tr>
+                            <td style="border:1px solid black"></td>
+                            <td style="border:1px solid black">{{ ligneSession['descritpion'] }}</td>
+                            <td style="text-align:center; border:1px solid black">{{ ligneSession['unite'] }}</td>
+                            <td style="text-align:center; border:1px solid black">{{ ligneSession['quantite'] }}</td>
+                            <td style="border:1px solid black"></td>
+                            <td style="border:1px solid black"></td>
+                        </tr>
+                        {% endif %}
+                        {% endfor %}
+                        {% endif %}
+                        
+                            <tr>
+                                <td colspan="4" class="sousTotal" style="text-align:right; border:1px solid black">Sous Total</td>
+                                <td style="border:1px solid black"></td>
+                                <td style="border:1px solid black"></td>
+                            </tr>
+                {% endif %}
+            {% endfor %}
+            {% set nbLot = 4 + cctp.lotCctp|length + 1 %}
+            
+            <tr>
+                <td style="border:1px solid black; background-color:grey">{{ nbLot }}</td>
+                <td style="border:1px solid black; background-color:grey">CONDITIONS DE RECEPTION</td>
+                <td style="border:1px solid black; background-color:grey"></td>
+                <td style="border:1px solid black; background-color:grey"></td>
+                <td style="border:1px solid black"></td>
+                <td style="border:1px solid black"></td>
+            </tr>
+            <tr>
+                <td style="border:1px solid black">{{ nbLot }}.1</td>
+                <td style="border:1px solid black">Documents</td>
+                <td style="text-align:center; border:1px solid black">Ens</td>
+                <td style="border:1px solid black"></td>
+                <td style="border:1px solid black"></td>
+                <td style="border:1px solid black"></td>
+            </tr>
+            <tr>
+                <td style="border:1px solid black">{{ nbLot }}.4</td>
+                <td style="border:1px solid black">DOE</td>
+                <td style="text-align:center; border:1px solid black">Ens</td>
+                <td style="border:1px solid black"></td>
+                <td style="border:1px solid black"></td>
+                <td style="border:1px solid black"></td>
+            </tr>
+            <tr>
+                <td style="border:1px solid black">{{ nbLot }}.6</td>
+                <td style="border:1px solid black">Nettoyage</td>
+                <td style="text-align:center; border:1px solid black">Ens</td>
+                <td style="border:1px solid black"></td>
+                <td style="border:1px solid black"></td>
+                <td style="border:1px solid black"></td>
+            </tr>
+            <tr>
+                <td colspan="4" class="sousTotal" style="text-align:right; border:1px solid black; font-weight: bold;">Sous Total</td>
+                <td style="border:1px solid black"></td>
+                <td style="border:1px solid black"></td>
+            </tr>
+            <tr>
+                <td style="border:1px solid black"></td>
+                <td style="border:1px solid black"></td>
+                <td colspan="4" class="total" style="border:1px solid black; font-weight: bold;">TOTAL HT</td>
+            </tr>
+            <tr>
+                <td style="border:1px solid black"></td>
+                <td style="border:1px solid black"></td>
+                <td colspan="4" class="total" style="border:1px solid black; font-weight: bold;">TVA 20%</td>
+            </tr>
+            <tr>
+                <td style="border:1px solid black"></td>
+                <td style="border:1px solid black"></td>
+                <td colspan="4" class="total" style="border:1px solid black; font-weight: bold;">TOTAL TTC</td>
+            </tr>
+        </tbody>
+    </table>
+        </br>
+        <p>Fait à</p> <p style="text-align:center">Le</p>
+        
+        <p>Signature</p> <p style="text-align:center">Cachet</p>
+        
+        
+</div>
+{% endblock %}

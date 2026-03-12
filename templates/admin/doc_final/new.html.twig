@@ -1,0 +1,12 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}New DocFinal{% endblock %}
+
+{% block body %}
+    <h1>Compléter le document</h1>
+<div class="container">
+    {{ include('admin/doc_final/_form.html.twig') }}
+
+    <a class="btn btn-primary" href="{{ path('cctp_show', {'id': cctp.id}) }}">Retour liste éléments</a>
+</div>
+{% endblock %}

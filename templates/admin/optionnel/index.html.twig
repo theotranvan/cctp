@@ -1,0 +1,38 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Optionnel index{% endblock %}
+
+{% block body %}
+    <h1>Optionnel index</h1>
+    <div class="container">
+    {% for message in app.flashes('message')%}
+    <div class="alert alert-success" role="alert">{{ message }}</div>
+    {% endfor %}
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Id</th>
+                <th>Content</th>
+                <th>actions</th>
+            </tr>
+        </thead>
+        <tbody>
+        {% for optionnel in optionnels %}
+            <tr>
+                <td>{{ optionnel.id }}</td>
+                <td>{{ optionnel.content|raw }}</td>
+                <td>
+                    <a href="{{ path('optionnel_show', {'id': optionnel.id}) }}">show</a>
+                    <a href="{{ path('optionnel_edit', {'id': optionnel.id}) }}">edit</a>
+                </td>
+            </tr>
+        {% else %}
+            <tr>
+                <td colspan="3">no records found</td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+    </div>
+    <a href="{{ path('optionnel_new') }}">Create new</a>
+{% endblock %}

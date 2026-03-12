@@ -1,0 +1,50 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Liste des éléments{% endblock %}
+
+{% block body %}
+<h1>Liste des éléments</h1>
+<div class="divButton">
+    <a class="btn btn-primary" href="{{ path('produit_new') }}" role="button">Créer nouveau élément</a>
+    <a class="btn btn-secondary" href="{{ path('admin_home') }}" role="button">Retour à l'accueil</a>
+</div>
+
+<div class="container">
+{% for message in app.flashes('message')%}
+    <div class="alert alert-success" role="alert">{{ message }}</div>
+{% endfor %}
+
+                <table class="table sortable">
+                    <thead>
+                        <tr>
+                            <th>Nom_produit</th>
+                            <th>Système</th>
+                            <th>Ordre</th>
+                            <th>actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for produit in produits %}
+                       
+                            <tr draggable="true" rel="{{ produit.id }}">
+                                <td>{{ produit.nomProduit }}</td>
+                                <td>{{ produit.systeme }}</td>
+                                <td>{{ produit.ordre }}</td>
+                                <td>
+                                    <a class="btn btn-primary" href="{{ path('produit_details', {'id': produit.id}) }}" role="button">Document</a>
+                                    <a class="btn btn-warning" href="{{ path('produit_edit', {'id': produit.id}) }}" role="button">Mettre à jour</a>
+                                </td>
+                            </tr>    
+                        
+                        
+                        {% endfor %}
+                    </tboby>
+                </table>
+
+</div>
+
+
+{% endblock %}
+{% block javascripts %}
+    <script src="{{ asset('js/dragDrop.js') }}"></script>
+{% endblock %}

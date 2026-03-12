@@ -1,0 +1,41 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Liste des systemes{% endblock %}
+
+{% block body %}
+    <h1>Liste des systemes</h1>
+
+    <div class="divButton">
+        <a class="btn btn-primary" href="{{ path('systeme_new') }}" role="button">Créer nouveau système</a>
+        <a class="btn btn-secondary" href="{{ path('admin_home') }}" role="button">Retour à l'accueil</a>
+    </div>
+    
+    <div class="container">
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Id</th>
+                <th>Nom_systeme</th>
+                <th>actions</th>
+            </tr>
+        </thead>
+        <tbody>
+        {% for systeme in systemes %}
+            <tr>
+                <td>{{ systeme.id }}</td>
+                <td>{{ systeme.nomSysteme }}</td>
+                <td>
+                    <a class="btn btn-primary" href="{{ path('systeme_show', {'id': systeme.id}) }}" role="button">Voir</a>
+                    <a class="btn btn-warning" href="{{ path('systeme_edit', {'id': systeme.id}) }}">Mettre à jour</a>
+                </td>
+            </tr>
+        {% else %}
+            <tr>
+                <td colspan="3">no records found</td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+    </div>
+    
+{% endblock %}

@@ -1,0 +1,85 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Estimation{% endblock %}
+
+{% block stylesheet %}
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.9.4/Chart.min.css" integrity="sha512-/zs32ZEJh+/EO2N1b0PEdoA10JkdC3zJ8L5FTiQu82LR9S/rOQNfQN7U59U9BC12swNeRAz3HSzIL2vpp4fv3w==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+{% endblock %}
+
+{% block body %}
+    <h1>Estimation</h1>
+    <div class="container">
+    <div class="row">
+    <div class="table-responsive col-md-6">
+    {{ form(form) }}
+    </div>
+    
+    <div class="table-responsive col-md-6">
+    <div class="canvas">
+        <canvas id="myChart" width="200" height="200"></canvas>
+    </div> 
+    </div>  
+    </div>   
+        <a class="btn btn-secondary" href="{{ path('admin_home') }}" role="button">Retour à l'accueil</a>
+    </div>
+{% endblock %}
+{% block javascripts %}
+    
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.9.4/Chart.min.js" integrity="sha512-d9xgZrVZpmmQlfonhQUvTR7lMPtO7NkZMkA0ABN3PHCbKA5nqylQ/yWlFAyY6hYgdF1Qh6nYiuADWwKB4C2WSw==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    
+    
+    <script>
+        window.onload = function() {
+            var tUsage = document.querySelector('#myChart');
+            var catUsage = document.querySelector("#catusage_nom_catusage");
+            var chartGraph = new Chart(tUsage, {
+                type: "pie",
+                data: {
+                    labels: {{ usageNom|raw }},
+                    datasets: [{
+                        label: 'Répartition des usages',
+                        data: {{ usageCount|raw }},
+                        backgroundColor: {{ usageColor|raw }}
+                    }]
+                }
+            });
+        
+        
+
+        catUsage.addEventListener("change", function(){
+        
+        var form = this.closest("form");
+        
+
+        var data1 = this.name + "=" + this.value;
+        console.log(data1);
+        fetch(form.action, {
+            method: form.getAttribute("method"),
+            body: data1,
+            headers: {
+                "Content-Type": "application/x-www-form-urlencoded, charset:utf-8"
+            }
+        })
+        //traitement de la reponse
+        .then(function (response) {
+            
+            return response.text();
+        })
+        //récupération de la réponse en html
+        .then(function (html) {
+            
+            //traitement de la réponse en html
+            var content = document.createElement("html");
+            content.innerHTML = html;
+            //ciblage du nouveau sélect, et modification du contenu en fonction de la réponse
+            var nouveauSelect = content.querySelector("#catusage_usage");
+            
+            document.querySelector("#catusage_usage").replaceWith(nouveauSelect);
+           
+            
+        });
+        
+    });
+    }    
+    </script>
+{% endblock %}

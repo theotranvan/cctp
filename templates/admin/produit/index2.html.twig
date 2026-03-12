@@ -1,0 +1,129 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Liste des éléments{% endblock %}
+
+{% block body %}
+<h1>Liste des éléments</h1>
+<div class="divButton">
+    <a class="btn btn-primary" href="{{ path('produit_new') }}" role="button">Créer nouveau élément</a>
+    <a class="btn btn-secondary" href="{{ path('admin_home') }}" role="button">Retour à l'accueil</a>
+</div>
+
+<div class="container">
+{% for message in app.flashes('message')%}
+    <div class="alert alert-success" role="alert">{{ message }}</div>
+{% endfor %}
+
+                <table class="table sortable">
+                    <thead>
+                        <tr>
+                            <th>Nom_produit</th>
+                            <th>Systeme</th>
+                            <th>Lot</th>
+                            <th>Ordre</th>
+                            <th>actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for produit in produits %}
+                        {#{% if  produit.nomProduit|slice(0,6) != "Normes" %}#}
+                        {% if produit.lot == 'Spécifications générales communes' %}
+                            <tr style="color: blue" draggable="true" rel="{{ produit.id }}">
+                                <td>{{ produit.nomProduit }}</td>
+                                <td>{{ produit.systeme }}</td>
+                                <td>{{ produit.lot }}</td>
+                                <td>{{ produit.ordre }}</td>
+                                <td>
+                                    <a  class="btn btn-primary" href="{{ path('produit_details', {'id': produit.id}) }}" role="button"><i class="fas fa-eye"></i></a>
+                                    <a class="btn btn-warning" href="{{ path('produit_edit', {'id': produit.id}) }}" role="button"><i class="fas fa-pen"></i></a>
+                                </td>
+                            </tr>
+                        {% elseif produit.lot == 'Chauffage' %} 
+                        <tr style="color: green" draggable="true" rel="{{ produit.id }}">
+                            <td>{{ produit.nomProduit }}</td>
+                            <td>{{ produit.systeme }}</td>
+                            <td>{{ produit.lot }}</td>
+                            <td>{{ produit.ordre }}</td>
+                            <td>
+                                <a class="btn btn-primary" href="{{ path('produit_details', {'id': produit.id}) }}" role="button"><i class="fas fa-eye"></i></a>
+                                <a class="btn btn-warning" href="{{ path('produit_edit', {'id': produit.id}) }}" role="button"><i class="fas fa-pen"></i></a>
+                            </td>
+                        </tr>
+                        {% elseif produit.lot == 'Plomberie' %} 
+                        <tr style="color: orange" draggable="true" rel="{{ produit.id }}">
+                            <td>{{ produit.nomProduit }}</td>
+                            <td>{{ produit.systeme }}</td>
+                            <td>{{ produit.lot }}</td>
+                            <td>{{ produit.ordre }}</td>
+                            <td>
+                                <a class="btn btn-primary" href="{{ path('produit_details', {'id': produit.id}) }}" role="button"><i class="fas fa-eye"></i></a>
+                                <a class="btn btn-warning" href="{{ path('produit_edit', {'id': produit.id}) }}" role="button"><i class="fas fa-pen"></i></a>
+                            </td>
+                        </tr>
+                        {% elseif produit.lot == 'Ventilation' %} 
+                        <tr style="color: purple" draggable="true" rel="{{ produit.id }}">
+                            <td>{{ produit.nomProduit }}</td>
+                            <td>{{ produit.systeme }}</td>
+                            <td>{{ produit.lot }}</td>
+                            <td>{{ produit.ordre }}</td>
+                            <td>
+                                <a class="btn btn-primary" href="{{ path('produit_details', {'id': produit.id}) }}" role="button"><i class="fas fa-eye"></i></a>
+                                <a class="btn btn-warning" href="{{ path('produit_edit', {'id': produit.id}) }}" role="button"><i class="fas fa-pen"></i></a>
+                            </td>
+                        </tr>
+                        {% elseif produit.lot == 'Air Comprimé' %} 
+                        <tr style="color: black" draggable="true" rel="{{ produit.id }}">
+                            <td>{{ produit.nomProduit }}</td>
+                            <td>{{ produit.systeme }}</td>
+                            <td>{{ produit.lot }}</td>
+                            <td>{{ produit.ordre }}</td>
+                            <td>
+                                <a class="btn btn-primary" href="{{ path('produit_details', {'id': produit.id}) }}" role="button"><i class="fas fa-eye"></i></a>
+                                <a class="btn btn-warning" href="{{ path('produit_edit', {'id': produit.id}) }}" role="button"><i class="fas fa-pen"></i></a>
+                            </td>
+                        </tr>
+                        {% elseif produit.lot == 'Condition de réception de l\'Installation' %} 
+                        <tr style="color: grey" draggable="true" rel="{{ produit.id }}">
+                            <td>{{ produit.nomProduit }}</td>
+                            <td>{{ produit.systeme }}</td>
+                            <td>{{ produit.lot }}</td>
+                            <td>{{ produit.ordre }}</td>
+                            <td>
+                                <a class="btn btn-primary" href="{{ path('produit_details', {'id': produit.id}) }}" role="button"><i class="fas fa-eye"></i></a>
+                                <a class="btn btn-warning" href="{{ path('produit_edit', {'id': produit.id}) }}" role="button"><i class="fas fa-pen"></i></a>
+                            </td>
+                        </tr>
+                        {% elseif produit.lot == 'Désenfumage' %}
+                        <tr style="color: red" draggable="true" rel="{{ produit.id }}">
+                            <td>{{ produit.nomProduit }}</td>
+                            <td>{{ produit.systeme }}</td>
+                            <td>{{ produit.lot }}</td>
+                            <td>{{ produit.ordre }}</td>
+                            <td>
+                                <a class="btn btn-primary" href="{{ path('produit_details', {'id': produit.id}) }}" role="button"><i class="fas fa-eye"></i></a>
+                                <a class="btn btn-warning" href="{{ path('produit_edit', {'id': produit.id}) }}" role="button"><i class="fas fa-pen"></i></a>
+                            </td>
+                        </tr>
+                        {% else %}
+                        <tr draggable="true" rel="{{ produit.id }}">
+                            <td>{{ produit.nomProduit }}</td>
+                            <td>{{ produit.systeme }}</td>
+                            <td>{{ produit.lot }}</td>
+                            <td>{{ produit.ordre }}</td>
+                            <td>
+                                <a class="btn btn-primary" href="{{ path('produit_details', {'id': produit.id}) }}" role="button"><i class="fas fa-eye"></i></a>
+                                <a class="btn btn-warning" href="{{ path('produit_edit', {'id': produit.id}) }}" role="button"><i class="fas fa-pen"></i></a>
+                            </td>
+                        </tr>
+                        {% endif %}
+                        
+                        {% endfor %}
+                    </tboby>
+                </table> 
+</div>
+
+
+{% endblock %}
+{% block javascripts %}
+    <script src="{{ asset('js/dragDrop.js') }}"></script>
+{% endblock %}
