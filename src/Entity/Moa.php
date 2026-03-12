@@ -1,103 +1,42 @@
 <?php
-
 namespace App\Entity;
-
 use App\Repository\MoaRepository;
-use Doctrine\Common\Collections\ArrayCollection;
-use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 
-/**
- * @ORM\Entity(repositoryClass=MoaRepository::class)
- */
+#[ORM\Entity(repositoryClass: MoaRepository::class)]
 class Moa
 {
-    /**
-     * @ORM\Id
-     * @ORM\GeneratedValue
-     * @ORM\Column(type="integer")
-     */
-    private $id;
+    #[ORM\Id]
+    #[ORM\GeneratedValue]
+    #[ORM\Column]
+    private ?int $id = null;
 
-    /**
-     * @ORM\Column(type="string", length=50)
-     */
-    private $nom_moa;
+    #[ORM\Column(length: 50)]
+    private ?string $nomMoa = null;
 
-    /**
-     * @ORM\Column(type="string", length=50)
-     */
-    private $prenom_moa;
+    #[ORM\Column(length: 50)]
+    private ?string $prenomMoa = null;
 
-    /**
-     * @ORM\Column(type="string", length=50)
-     */
-    private $tel_moa;
+    #[ORM\Column(length: 20)]
+    private ?string $telMoa = null;
 
-    /**
-     * @ORM\Column(type="string", length=255, nullable=true)
-     */
-    private $mail_moa;
+    #[ORM\Column(length: 255, nullable: true)]
+    private ?string $mailMoa = null;
 
-    
-    public function __toString()
-    {
-        return $this->nom_moa;
-    }
+    #[ORM\ManyToOne(targetEntity: Entreprise::class)]
+    private ?Entreprise $entreprise = null;
 
-    public function getId(): ?int
-    {
-        return $this->id;
-    }
-
-    public function getNomMoa(): ?string
-    {
-        return $this->nom_moa;
-    }
-
-    public function setNomMoa(string $nom_moa): self
-    {
-        $this->nom_moa = $nom_moa;
-
-        return $this;
-    }
-
-    public function getPrenomMoa(): ?string
-    {
-        return $this->prenom_moa;
-    }
-
-    public function setPrenomMoa(string $prenom_moa): self
-    {
-        $this->prenom_moa = $prenom_moa;
-
-        return $this;
-    }
-
-    public function getTelMoa(): ?string
-    {
-        return $this->tel_moa;
-    }
-
-    public function setTelMoa(string $tel_moa): self
-    {
-        $this->tel_moa = $tel_moa;
-
-        return $this;
-    }
-
-    public function getMailMoa(): ?string
-    {
-        return $this->mail_moa;
-    }
-
-    public function setMailMoa(?string $mail_moa): self
-    {
-        $this->mail_moa = $mail_moa;
-
-        return $this;
-    }
-
-
-   
+    public function getId(): ?int { return $this->id; }
+    public function getNomMoa(): ?string { return $this->nomMoa; }
+    public function setNomMoa(string $nomMoa): static { $this->nomMoa = $nomMoa; return $this; }
+    public function getPrenomMoa(): ?string { return $this->prenomMoa; }
+    public function setPrenomMoa(string $prenomMoa): static { $this->prenomMoa = $prenomMoa; return $this; }
+    public function getTelMoa(): ?string { return $this->telMoa; }
+    public function setTelMoa(string $telMoa): static { $this->telMoa = $telMoa; return $this; }
+    public function getMailMoa(): ?string { return $this->mailMoa; }
+    public function setMailMoa(?string $mailMoa): static { $this->mailMoa = $mailMoa; return $this; }
+    public function getEntreprise(): ?Entreprise { return $this->entreprise; }
+    public function setEntreprise(?Entreprise $entreprise): static { $this->entreprise = $entreprise; return $this; }
+    public function getFullName(): string { return $this->prenomMoa . ' ' . $this->nomMoa; }
+    public function __toString(): string { return $this->getFullName(); }
 }

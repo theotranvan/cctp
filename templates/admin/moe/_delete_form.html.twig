@@ -1,4 +1,0 @@
-<form method="post" action="{{ path('moe_delete', {'id': moe.id}) }}" onsubmit="return confirm('etes-vous sûrs de vouloir supprimer ce MOE?');">
-    <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ moe.id) }}">
-    <button class="btn btn-outline-danger">Supprimer</button>
-</form>
