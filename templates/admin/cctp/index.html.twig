@@ -1,0 +1,38 @@
+{% extends 'base.html.twig' %}
+{% block title %}CCTPs - CCTP Manager{% endblock %}
+{% block page_title %}<i class="bi bi-file-earmark-text me-2 text-primary"></i>CCTPs{% endblock %}
+{% block body %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <nav aria-label="breadcrumb"><ol class="breadcrumb mb-0">
+        <li class="breadcrumb-item"><a href="{{ path('admin_dashboard') }}">Accueil</a></li>
+        <li class="breadcrumb-item active">CCTPs</li>
+    </ol></nav>
+    <a href="{{ path('cctp_new') }}" class="btn btn-primary"><i class="bi bi-plus-circle me-1"></i>Nouveau CCTP</a>
+</div>
+<div class="card"><div class="card-body p-0">
+{% if cctps.totalItemCount == 0 %}
+<div class="text-center py-5 text-muted"><i class="bi bi-file-earmark-text display-4 d-block mb-3 opacity-25"></i><p>Aucun CCTP trouvé.</p><a href="{{ path('cctp_new') }}" class="btn btn-primary">Créer un CCTP</a></div>
+{% else %}
+<div class="table-responsive"><table class="table table-hover mb-0">
+<thead><tr><th>N° Affaire</th><th>Titre</th><th>Opération</th><th>Lots</th><th>Produits</th><th>Statut</th><th>Créé le</th><th class="text-end">Actions</th></tr></thead>
+<tbody>{% for cctp in cctps %}<tr>
+<td><span class="badge bg-primary fw-bold">{{ cctp.numAffaire }}</span></td>
+<td class="fw-semibold">{{ cctp.titre }}</td>
+<td class="text-muted">{{ cctp.nomOperation }}</td>
+<td><span class="badge bg-light text-dark">{{ cctp.lots|length }}</span></td>
+<td><span class="badge bg-light text-dark">{{ cctp.produits|length }}</span></td>
+<td>{% if cctp.close %}<span class="badge bg-secondary rounded-pill px-2">Clôturé</span>{% else %}<span class="badge bg-success rounded-pill px-2">En cours</span>{% endif %}</td>
+<td class="text-muted small">{{ cctp.createdAt ? cctp.createdAt|date('d/m/Y') : '-' }}</td>
+<td class="text-end">
+<div class="btn-group btn-group-sm">
+<a href="{{ path('cctp_show', {id: cctp.id}) }}" class="btn btn-outline-primary" title="Voir"><i class="bi bi-eye"></i></a>
+<a href="{{ path('cctp_edit', {id: cctp.id}) }}" class="btn btn-outline-secondary" title="Modifier"><i class="bi bi-pencil"></i></a>
+<button type="button" class="btn btn-outline-danger" onclick="if(confirm('Supprimer ce CCTP ?')) document.getElementById('del-{{ cctp.id }}').submit()"><i class="bi bi-trash"></i></button>
+</div>
+<form id="del-{{ cctp.id }}" method="post" action="{{ path('cctp_delete', {id: cctp.id}) }}" class="d-none"><input type="hidden" name="_token" value="{{ csrf_token('delete' ~ cctp.id) }}"></form>
+</td></tr>{% endfor %}</tbody>
+</table></div>
+<div class="p-3 border-top">{{ knp_pagination_render(cctps) }}</div>
+{% endif %}
+</div></div>
+{% endblock %}

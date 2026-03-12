@@ -1,0 +1,31 @@
+{% extends 'base.html.twig' %}
+{% block title %}Devis{% endblock %}
+{% block page_title %}<i class="bi bi-receipt me-2 text-primary"></i>Devis{% endblock %}
+{% block body %}
+<nav aria-label="breadcrumb" class="mb-4"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="{{ path('admin_dashboard') }}">Accueil</a></li><li class="breadcrumb-item"><a href="{{ path('devis_index') }}">Devis</a></li><li class="breadcrumb-item active">Détail</li></ol></nav>
+<div class="row g-4">
+<div class="col-lg-4"><div class="card">
+<div class="card-header d-flex justify-content-between"><span>Informations</span><a href="{{ path('devis_edit', {id: devis.id}) }}" class="btn btn-sm btn-outline-secondary"><i class="bi bi-pencil"></i></a></div>
+<div class="card-body"><dl class="row mb-0">
+<dt class="col-sm-5 text-muted small">Date</dt><dd class="col-sm-7">{{ devis.createdAt ? devis.createdAt|date('d/m/Y') : '-' }}</dd>
+<dt class="col-sm-5 text-muted small">Chantier</dt><dd class="col-sm-7">{{ devis.chantier ? devis.chantier.nomChantier : '-' }}</dd>
+<dt class="col-sm-5 text-muted small">Entreprise</dt><dd class="col-sm-7">{{ devis.entreprise ? devis.entreprise.nomEntreprise : '-' }}</dd>
+<dt class="col-sm-5 text-muted small">Total HT</dt><dd class="col-sm-7 fw-bold">{{ devis.totalHT|number_format(2, ',', ' ') }} €</dd>
+</dl></div>
+</div></div>
+<div class="col-lg-8"><div class="card"><div class="card-header">Lignes</div>
+<div class="card-body p-0">
+{% if devis.lignesDevis is empty %}<div class="text-center py-4 text-muted">Aucune ligne.</div>
+{% else %}
+<div class="table-responsive"><table class="table mb-0">
+<thead><tr><th>Produit</th><th>Qté</th><th class="text-end">Montant HT</th></tr></thead>
+<tbody>{% for ligne in devis.lignesDevis %}<tr>
+<td>{{ ligne.produit ? ligne.produit.nomProduit : '-' }}</td>
+<td>{{ ligne.quantite }}</td>
+<td class="text-end">{{ ligne.montantHT|number_format(2, ',', ' ') }} €</td>
+</tr>{% endfor %}</tbody>
+</table></div>
+{% endif %}
+</div></div></div>
+</div>
+{% endblock %}

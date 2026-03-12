@@ -1,0 +1,126 @@
+{% extends 'base.html.twig' %}
+{% block title %}{{ cctp.titre }} - CCTP Manager{% endblock %}
+{% block page_title %}<i class="bi bi-file-earmark-text me-2 text-primary"></i>{{ cctp.titre }}{% endblock %}
+{% block body %}
+<nav aria-label="breadcrumb" class="mb-4"><ol class="breadcrumb">
+<li class="breadcrumb-item"><a href="{{ path('admin_dashboard') }}">Accueil</a></li>
+<li class="breadcrumb-item"><a href="{{ path('cctp_index') }}">CCTPs</a></li>
+<li class="breadcrumb-item active">{{ cctp.titre }}</li>
+</ol></nav>
+<div class="row g-4">
+<div class="col-lg-4">
+  <div class="card mb-3">
+    <div class="card-header d-flex justify-content-between align-items-center">
+      <span><i class="bi bi-info-circle me-2 text-primary"></i>Informations</span>
+      <a href="{{ path('cctp_edit', {id: cctp.id}) }}" class="btn btn-sm btn-outline-secondary"><i class="bi bi-pencil"></i></a>
+    </div>
+    <div class="card-body">
+      <dl class="row mb-0">
+        <dt class="col-sm-5 text-muted small">N° Affaire</dt><dd class="col-sm-7"><span class="badge bg-primary">{{ cctp.numAffaire }}</span></dd>
+        <dt class="col-sm-5 text-muted small">Titre</dt><dd class="col-sm-7 fw-semibold">{{ cctp.titre }}</dd>
+        <dt class="col-sm-5 text-muted small">Opération</dt><dd class="col-sm-7">{{ cctp.nomOperation }}</dd>
+        <dt class="col-sm-5 text-muted small">Statut</dt><dd class="col-sm-7">{% if cctp.close %}<span class="badge bg-secondary rounded-pill">Clôturé</span>{% else %}<span class="badge bg-success rounded-pill">En cours</span>{% endif %}</dd>
+        <dt class="col-sm-5 text-muted small">Créé le</dt><dd class="col-sm-7 text-muted small">{{ cctp.createdAt ? cctp.createdAt|date('d/m/Y à H:i') : '-' }}</dd>
+        <dt class="col-sm-5 text-muted small">Par</dt><dd class="col-sm-7 text-muted small">{{ cctp.utilisateur ? cctp.utilisateur.fullName : '-' }}</dd>
+      </dl>
+    </div>
+    <div class="card-footer">
+      <form method="post" action="{{ path('cctp_toggle', {id: cctp.id}) }}">
+        <input type="hidden" name="_token" value="{{ csrf_token('toggle' ~ cctp.id) }}">
+        <button type="submit" class="btn btn-sm {{ cctp.close ? 'btn-success' : 'btn-warning' }} w-100">
+          {% if cctp.close %}<i class="bi bi-folder2-open me-1"></i>Réouvrir{% else %}<i class="bi bi-lock me-1"></i>Clôturer{% endif %}
+        </button>
+      </form>
+    </div>
+  </div>
+  <div class="card mb-3">
+    <div class="card-header"><i class="bi bi-building me-2 text-primary"></i>Intervenants</div>
+    <div class="card-body">
+      {% if cctp.entreprises is empty %}<p class="text-muted small mb-0">Aucun intervenant.</p>
+      {% else %}{% for e in cctp.entreprises %}<div class="d-flex align-items-center gap-2 mb-2"><span class="badge bg-secondary">{{ e.role }}</span><span class="small">{{ e.nomEntreprise }}</span></div>{% endfor %}{% endif %}
+    </div>
+  </div>
+  <div class="card">
+    <div class="card-header"><i class="bi bi-collection me-2 text-primary"></i>Lots ({{ cctp.lots|length }})</div>
+    <div class="card-body">
+      {% if cctp.lots is empty %}<p class="text-muted small mb-0">Aucun lot associé.</p>
+      {% else %}{% for lot in cctp.lots %}<span class="badge bg-light text-dark border me-1 mb-1">{{ lot.nomLot }}</span>{% endfor %}{% endif %}
+    </div>
+  </div>
+</div>
+<div class="col-lg-8">
+  <div class="card">
+    <div class="card-header d-flex align-items-center justify-content-between">
+      <span><i class="bi bi-box me-2 text-primary"></i>Produits du CCTP ({{ cctp.produits|length }})</span>
+      <button class="btn btn-sm btn-primary" data-bs-toggle="modal" data-bs-target="#addProduitModal"><i class="bi bi-plus me-1"></i>Ajouter des produits</button>
+    </div>
+    <div class="card-body p-0">
+      {% if cctp.produits is empty %}
+      <div class="text-center py-5 text-muted"><i class="bi bi-box display-4 d-block mb-3 opacity-25"></i><p>Aucun produit ajouté.</p>
+      <button class="btn btn-primary btn-sm" data-bs-toggle="modal" data-bs-target="#addProduitModal"><i class="bi bi-plus me-1"></i>Ajouter des produits</button></div>
+      {% else %}
+      {% set grouped = {} %}
+      {% for produit in cctp.produits %}
+        {% set lotName = produit.lot ? produit.lot.nomLot : 'Sans lot' %}
+        {% if grouped[lotName] is not defined %}{% set grouped = grouped|merge({(lotName): []}) %}{% endif %}
+        {% set grouped = grouped|merge({(lotName): grouped[lotName]|merge([produit])}) %}
+      {% endfor %}
+      {% for lotName, produits in grouped %}
+      <div class="border-bottom">
+        <div class="px-3 py-2 bg-light fw-semibold small text-muted"><i class="bi bi-collection me-1"></i>{{ lotName }}</div>
+        {% for produit in produits %}
+        <div class="d-flex align-items-start gap-3 px-3 py-2 border-bottom">
+          <div class="flex-grow-1">
+            <div class="fw-semibold small">{{ produit.nomProduit }}</div>
+            {% if produit.systeme %}<span class="badge bg-light text-muted border small">{{ produit.systeme.nomSysteme }}</span>{% endif %}
+          </div>
+          <form method="post" action="{{ path('cctp_remove_produit', {id: cctp.id, produitId: produit.id}) }}">
+            <input type="hidden" name="_token" value="{{ csrf_token('remove_produit_' ~ produit.id) }}">
+            <button type="submit" class="btn btn-sm btn-outline-danger" onclick="return confirm('Retirer ce produit ?')"><i class="bi bi-x-lg"></i></button>
+          </form>
+        </div>
+        {% endfor %}
+      </div>
+      {% endfor %}
+      {% endif %}
+    </div>
+  </div>
+</div>
+</div>
+
+<div class="modal fade" id="addProduitModal" tabindex="-1">
+  <div class="modal-dialog modal-xl"><div class="modal-content">
+    <div class="modal-header"><h5 class="modal-title"><i class="bi bi-box-seam me-2"></i>Ajouter des produits au CCTP</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div>
+    <form method="post" action="{{ path('cctp_add_produit', {id: cctp.id}) }}">
+      <input type="hidden" name="_token" value="{{ csrf_token('add_produit_' ~ cctp.id) }}">
+      <div class="modal-body">
+        {% if cctp.lots is empty %}
+        <div class="alert alert-warning"><i class="bi bi-exclamation-triangle me-2"></i>Aucun lot associé. <a href="{{ path('cctp_edit', {id: cctp.id}) }}">Ajouter des lots</a> d'abord.</div>
+        {% else %}
+        <div class="row g-3">
+        {% for lot in cctp.lots %}
+        <div class="col-md-6"><div class="card border">
+          <div class="card-header py-2 bg-light fw-semibold small">{{ lot.nomLot }}</div>
+          <div class="card-body" style="max-height:300px;overflow-y:auto;">
+            {% if lot.produits is empty %}<p class="text-muted small">Aucun produit dans ce lot.</p>
+            {% else %}{% for produit in lot.produits %}
+            {% set alreadyAdded = cctp.produits.contains(produit) %}
+            <div class="form-check mb-1">
+              <input class="form-check-input" type="checkbox" name="produits[]" value="{{ produit.id }}" id="prod_{{ produit.id }}" {{ alreadyAdded ? 'checked disabled' : '' }}>
+              <label class="form-check-label small" for="prod_{{ produit.id }}">{{ produit.nomProduit }}{% if alreadyAdded %} <span class="badge bg-success ms-1">Déjà ajouté</span>{% endif %}</label>
+            </div>
+            {% endfor %}{% endif %}
+          </div>
+        </div></div>
+        {% endfor %}
+        </div>
+        {% endif %}
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Annuler</button>
+        <button type="submit" class="btn btn-primary"><i class="bi bi-check-lg me-1"></i>Ajouter la sélection</button>
+      </div>
+    </form>
+  </div></div>
+</div>
+{% endblock %}

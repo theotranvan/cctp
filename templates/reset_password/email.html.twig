@@ -1,0 +1,5 @@
+Bonjour,<br><br>
+Pour réinitialiser votre mot de passe, cliquez sur le lien ci-dessous (valable {{ resetToken.expirationMessageKey|trans(resetToken.expirationMessageData, 'ResetPasswordBundle') }}) :<br><br>
+<a href="{{ url('app_reset_password', {token: resetToken.token}) }}">Réinitialiser mon mot de passe</a><br><br>
+Si vous n'avez pas demandé de réinitialisation, ignorez cet email.<br><br>
+Cordialement,<br>CCTP Manager

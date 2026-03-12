@@ -1,0 +1,34 @@
+{% extends 'base.html.twig' %}
+{% block title %}Entreprises{% endblock %}
+{% block page_title %}<i class="bi bi-building me-2 text-primary"></i>Entreprises{% endblock %}
+{% block body %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+<nav aria-label="breadcrumb"><ol class="breadcrumb mb-0"><li class="breadcrumb-item"><a href="{{ path('admin_dashboard') }}">Accueil</a></li><li class="breadcrumb-item active">Entreprises</li></ol></nav>
+<a href="{{ path('entreprise_new') }}" class="btn btn-primary"><i class="bi bi-plus-circle me-1"></i>Nouvelle entreprise</a>
+</div>
+<div class="mb-3"><div class="btn-group">
+<a href="{{ path('entreprise_index') }}" class="btn btn-sm {{ current_role == '' ? 'btn-primary' : 'btn-outline-primary' }}">Tous</a>
+<a href="{{ path('entreprise_index', {role: 'MOA'}) }}" class="btn btn-sm {{ current_role == 'MOA' ? 'btn-primary' : 'btn-outline-primary' }}">MOA</a>
+<a href="{{ path('entreprise_index', {role: 'MOE'}) }}" class="btn btn-sm {{ current_role == 'MOE' ? 'btn-primary' : 'btn-outline-primary' }}">MOE</a>
+<a href="{{ path('entreprise_index', {role: 'Installateur'}) }}" class="btn btn-sm {{ current_role == 'Installateur' ? 'btn-primary' : 'btn-outline-primary' }}">Installateur</a>
+</div></div>
+<div class="card"><div class="card-body p-0">
+{% if entreprises.totalItemCount == 0 %}<div class="text-center py-5 text-muted"><p>Aucune entreprise trouvée.</p></div>
+{% else %}
+<div class="table-responsive"><table class="table table-hover mb-0">
+<thead><tr><th>Nom</th><th>Adresse</th><th>Rôle</th><th class="text-end">Actions</th></tr></thead>
+<tbody>{% for entreprise in entreprises %}<tr>
+<td class="fw-semibold">{{ entreprise.nomEntreprise }}</td>
+<td class="text-muted small">{{ entreprise.adresse }}</td>
+<td><span class="badge bg-secondary">{{ entreprise.role }}</span></td>
+<td class="text-end"><div class="btn-group btn-group-sm">
+<a href="{{ path('entreprise_edit', {id: entreprise.id}) }}" class="btn btn-outline-secondary"><i class="bi bi-pencil"></i></a>
+<button type="button" class="btn btn-outline-danger" onclick="if(confirm('Supprimer ?')) document.getElementById('del-e-{{ entreprise.id }}').submit()"><i class="bi bi-trash"></i></button>
+</div>
+<form id="del-e-{{ entreprise.id }}" method="post" action="{{ path('entreprise_delete', {id: entreprise.id}) }}" class="d-none"><input type="hidden" name="_token" value="{{ csrf_token('delete' ~ entreprise.id) }}"></form>
+</td></tr>{% endfor %}</tbody>
+</table></div>
+<div class="p-3 border-top">{{ knp_pagination_render(entreprises) }}</div>
+{% endif %}
+</div></div>
+{% endblock %}

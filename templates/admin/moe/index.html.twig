@@ -1,0 +1,26 @@
+{% extends 'base.html.twig' %}
+{% block title %}MOEs{% endblock %}
+{% block page_title %}<i class="bi bi-person-workspace me-2 text-primary"></i>MOEs{% endblock %}
+{% block body %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+<nav aria-label="breadcrumb"><ol class="breadcrumb mb-0"><li class="breadcrumb-item"><a href="{{ path('admin_dashboard') }}">Accueil</a></li><li class="breadcrumb-item active">MOEs</li></ol></nav>
+<a href="{{ path('moe_new') }}" class="btn btn-primary"><i class="bi bi-plus-circle me-1"></i>Nouveau</a>
+</div>
+<div class="card"><div class="card-body p-0">
+{% if moes is empty %}
+<div class="text-center py-5 text-muted"><i class="bi bi-person-workspace display-4 d-block mb-3 opacity-25"></i><p>Aucun MOE trouvé.</p><a href="{{ path('moe_new') }}" class="btn btn-primary">Créer</a></div>
+{% else %}
+<div class="table-responsive"><table class="table table-hover mb-0">
+<thead><tr><th>Nom</th><th class="text-end">Actions</th></tr></thead>
+<tbody>{% for moe in moes %}<tr>
+<td class="fw-semibold">{{ moe.nomMoe }}</td>
+<td class="text-end"><div class="btn-group btn-group-sm">
+<a href="{{ path('moe_edit', {id: moe.id}) }}" class="btn btn-outline-secondary"><i class="bi bi-pencil"></i></a>
+<button type="button" class="btn btn-outline-danger" onclick="if(confirm('Supprimer ?')) document.getElementById('del-moe-{{ moe.id }}').submit()"><i class="bi bi-trash"></i></button>
+</div>
+<form id="del-moe-{{ moe.id }}" method="post" action="{{ path('moe_delete', {id: moe.id}) }}" class="d-none"><input type="hidden" name="_token" value="{{ csrf_token('delete' ~ moe.id) }}"></form>
+</td></tr>{% endfor %}</tbody>
+</table></div>
+{% endif %}
+</div></div>
+{% endblock %}

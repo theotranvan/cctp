@@ -1,0 +1,28 @@
+{% extends 'base.html.twig' %}
+{% block title %}Devis{% endblock %}
+{% block page_title %}<i class="bi bi-receipt me-2 text-primary"></i>Devis{% endblock %}
+{% block body %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+<nav aria-label="breadcrumb"><ol class="breadcrumb mb-0"><li class="breadcrumb-item"><a href="{{ path('admin_dashboard') }}">Accueil</a></li><li class="breadcrumb-item active">Devis</li></ol></nav>
+<a href="{{ path('devis_new') }}" class="btn btn-primary"><i class="bi bi-plus-circle me-1"></i>Nouveau devis</a>
+</div>
+<div class="card"><div class="card-body p-0">
+{% if devis.totalItemCount == 0 %}<div class="text-center py-5 text-muted"><p>Aucun devis.</p></div>
+{% else %}
+<div class="table-responsive"><table class="table table-hover mb-0">
+<thead><tr><th>Date</th><th>Chantier</th><th>Entreprise</th><th>Total HT</th><th class="text-end">Actions</th></tr></thead>
+<tbody>{% for d in devis %}<tr>
+<td class="text-muted small">{{ d.createdAt ? d.createdAt|date('d/m/Y') : '-' }}</td>
+<td>{{ d.chantier ? d.chantier.nomChantier : '-' }}</td>
+<td>{{ d.entreprise ? d.entreprise.nomEntreprise : '-' }}</td>
+<td class="fw-semibold">{{ d.totalHT|number_format(2, ',', ' ') }} €</td>
+<td class="text-end"><div class="btn-group btn-group-sm">
+<a href="{{ path('devis_show', {id: d.id}) }}" class="btn btn-outline-primary"><i class="bi bi-eye"></i></a>
+<a href="{{ path('devis_edit', {id: d.id}) }}" class="btn btn-outline-secondary"><i class="bi bi-pencil"></i></a>
+<button type="button" class="btn btn-outline-danger" onclick="if(confirm('Supprimer ?')) document.getElementById('del-d-{{ d.id }}').submit()"><i class="bi bi-trash"></i></button>
+</div><form id="del-d-{{ d.id }}" method="post" action="{{ path('devis_delete', {id: d.id}) }}" class="d-none"><input type="hidden" name="_token" value="{{ csrf_token('delete' ~ d.id) }}"></form></td></tr>{% endfor %}</tbody>
+</table></div>
+<div class="p-3 border-top">{{ knp_pagination_render(devis) }}</div>
+{% endif %}
+</div></div>
+{% endblock %}

@@ -1,0 +1,8 @@
+{% extends 'base.html.twig' %}
+{% block title %}Devis{% endblock %}
+{% block page_title %}<i class="bi bi-receipt me-2 text-primary"></i>Devis{% endblock %}
+{% block body %}
+<nav aria-label="breadcrumb" class="mb-4"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="{{ path('admin_dashboard') }}">Accueil</a></li><li class="breadcrumb-item"><a href="{{ path('devis_index') }}">Devis</a></li><li class="breadcrumb-item active">edit</li></ol></nav>
+<div class="row justify-content-center"><div class="col-lg-7"><div class="card"><div class="card-header">Devis</div>
+<div class="card-body p-4">{{ form_start(form) }}{{ form_widget(form) }}<div class="d-flex gap-2 pt-3 border-top"><button type="submit" class="btn btn-primary"><i class="bi bi-check-lg me-1"></i>Enregistrer</button><a href="{{ path('devis_index') }}" class="btn btn-outline-secondary">Annuler</a></div>{{ form_end(form) }}</div></div></div></div>
+{% endblock %}
