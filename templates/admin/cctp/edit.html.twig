@@ -1,19 +1,29 @@
 {% extends 'base.html.twig' %}
-
-{% block title %}Mise à jour du Cctp{% endblock %}
-
+{% block title %}Modifier {{ cctp.titre }}{% endblock %}
+{% block page_title %}<i class="bi bi-pencil me-2 text-primary"></i>Modifier le CCTP{% endblock %}
 {% block body %}
-    <h1>Mise à jour du Cctp</h1>
-
-    <div class="divButtonEditCctp">
-        <a class="btn btn-primary" href="{{ path('cctp_index') }}" role="button">Retour liste Cctp</a>
-        {{ include('admin/cctp/_delete_form.html.twig') }}
-        <a class="btn btn-secondary" href="{{ path('admin_home') }}" role="button">Retour à l'accueil</a>
-    </div>
-
-    <div class="container">
-        {{ include('admin/cctp/_form.html.twig', {'button_label': 'Valider'}) }}   
-    </div>
-     
+<nav aria-label="breadcrumb" class="mb-4"><ol class="breadcrumb">
+<li class="breadcrumb-item"><a href="{{ path('admin_dashboard') }}">Accueil</a></li>
+<li class="breadcrumb-item"><a href="{{ path('cctp_index') }}">CCTPs</a></li>
+<li class="breadcrumb-item"><a href="{{ path('cctp_show', {id: cctp.id}) }}">{{ cctp.titre }}</a></li>
+<li class="breadcrumb-item active">Modifier</li>
+</ol></nav>
+<div class="row justify-content-center"><div class="col-lg-8">
+<div class="card"><div class="card-header"><i class="bi bi-pencil-square me-2 text-primary"></i>Modifier le CCTP</div>
+<div class="card-body p-4">
+{{ form_start(form) }}
+<div class="row g-3">
+<div class="col-md-8"><div class="mb-3">{{ form_label(form.titre) }}{{ form_widget(form.titre, {attr: {class: 'form-control'}}) }}{{ form_errors(form.titre) }}</div></div>
+<div class="col-md-4"><div class="mb-3">{{ form_label(form.numAffaire) }}{{ form_widget(form.numAffaire, {attr: {class: 'form-control'}}) }}{{ form_errors(form.numAffaire) }}</div></div>
+<div class="col-12"><div class="mb-3">{{ form_label(form.nomOperation) }}{{ form_widget(form.nomOperation, {attr: {class: 'form-control'}}) }}{{ form_errors(form.nomOperation) }}</div></div>
+<div class="col-md-6"><div class="mb-3">{{ form_label(form.lots) }}{{ form_widget(form.lots) }}</div></div>
+<div class="col-md-6"><div class="mb-3">{{ form_label(form.entreprises) }}{{ form_widget(form.entreprises) }}</div></div>
+</div>
+<div class="d-flex gap-2 pt-3 border-top">
+<button type="submit" class="btn btn-primary"><i class="bi bi-check-lg me-1"></i>Enregistrer</button>
+<a href="{{ path('cctp_show', {id: cctp.id}) }}" class="btn btn-outline-secondary">Annuler</a>
+</div>
+{{ form_end(form) }}
+</div></div>
+</div></div>
 {% endblock %}
-

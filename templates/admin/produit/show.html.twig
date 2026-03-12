@@ -1,0 +1,23 @@
+{% extends 'base.html.twig' %}
+{% block title %}{{ produit.nomProduit }}{% endblock %}
+{% block page_title %}<i class="bi bi-box me-2 text-primary"></i>{{ produit.nomProduit }}{% endblock %}
+{% block body %}
+<nav aria-label="breadcrumb" class="mb-4"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="{{ path('admin_dashboard') }}">Accueil</a></li><li class="breadcrumb-item"><a href="{{ path('produit_index') }}">Produits</a></li><li class="breadcrumb-item active">{{ produit.nomProduit }}</li></ol></nav>
+<div class="row g-4">
+<div class="col-lg-4"><div class="card">
+<div class="card-header d-flex justify-content-between"><span><i class="bi bi-info-circle me-2 text-primary"></i>Informations</span><a href="{{ path('produit_edit', {id: produit.id}) }}" class="btn btn-sm btn-outline-secondary"><i class="bi bi-pencil"></i></a></div>
+<div class="card-body"><dl class="row mb-0">
+<dt class="col-sm-5 text-muted small">Nom</dt><dd class="col-sm-7 fw-semibold">{{ produit.nomProduit }}</dd>
+<dt class="col-sm-5 text-muted small">Lot</dt><dd class="col-sm-7">{{ produit.lot ? produit.lot.nomLot : '-' }}</dd>
+<dt class="col-sm-5 text-muted small">Système</dt><dd class="col-sm-7">{{ produit.systeme ? produit.systeme.nomSysteme : '-' }}</dd>
+<dt class="col-sm-5 text-muted small">Unité</dt><dd class="col-sm-7">{{ produit.unite ?? '-' }}</dd>
+</dl></div>
+</div></div>
+<div class="col-lg-8">
+<div class="card mb-3"><div class="card-header"><i class="bi bi-file-text me-2 text-primary"></i>Contenu technique</div>
+<div class="card-body"><pre class="mb-0" style="white-space:pre-wrap;font-family:inherit;">{{ produit.content }}</pre></div></div>
+{% if produit.modifiable %}<div class="card"><div class="card-header"><i class="bi bi-pencil-square me-2 text-warning"></i>Partie modifiable</div>
+<div class="card-body"><pre class="mb-0" style="white-space:pre-wrap;font-family:inherit;">{{ produit.modifiable }}</pre></div></div>{% endif %}
+</div>
+</div>
+{% endblock %}

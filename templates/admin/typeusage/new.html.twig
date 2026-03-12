@@ -1,0 +1,14 @@
+{% extends 'base.html.twig' %}
+{% block title %}Nouveau Type d'usage{% endblock %}
+{% block page_title %}<i class="bi bi-plus-circle me-2 text-primary"></i>Nouveau Type d'usage{% endblock %}
+{% block body %}
+<nav aria-label="breadcrumb" class="mb-4"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="{{ path('admin_dashboard') }}">Accueil</a></li><li class="breadcrumb-item"><a href="{{ path('typeusage_index') }}">Type d'usages</a></li><li class="breadcrumb-item active">Nouveau</li></ol></nav>
+<div class="row justify-content-center"><div class="col-lg-6"><div class="card">
+<div class="card-header"><i class="bi bi-tags me-2 text-primary"></i>Créer un Type d'usage</div>
+<div class="card-body p-4">
+{{ form_start(form) }}
+{{ form_widget(form) }}
+<div class="d-flex gap-2 pt-3 border-top"><button type="submit" class="btn btn-primary"><i class="bi bi-check-lg me-1"></i>Créer</button><a href="{{ path('typeusage_index') }}" class="btn btn-outline-secondary">Annuler</a></div>
+{{ form_end(form) }}
+</div></div></div></div>
+{% endblock %}

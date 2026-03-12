@@ -1,19 +1,8 @@
 {% extends 'base.html.twig' %}
-
-{% block title %}Mise à jour entreprise{% endblock %}
-
+{% block title %}Entreprise{% endblock %}
+{% block page_title %}<i class="bi bi-building me-2 text-primary"></i>Entreprise{% endblock %}
 {% block body %}
-    <h1>Mise à jour entreprise</h1>
-
-    <div class="divButtonEditCctp">
-        <a class="btn btn-primary" href="{{ path('entreprise_index') }}" role="button">Retour liste entreprise</a>
-        {{ include('admin/entreprise/_delete_form.html.twig') }}
-        <a class="btn btn-secondary" href="{{ path('admin_home') }}" role="button">Retour à l'accueil</a>
-    </div>
-
-    <div class="container"> 
-    {{ include('admin/entreprise/_form.html.twig', {'button_label': 'Valider'}) }}
-    </div>
-
-    
+<nav aria-label="breadcrumb" class="mb-4"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="{{ path('admin_dashboard') }}">Accueil</a></li><li class="breadcrumb-item"><a href="{{ path('entreprise_index') }}">Entreprises</a></li><li class="breadcrumb-item active">edit</li></ol></nav>
+<div class="row justify-content-center"><div class="col-lg-7"><div class="card"><div class="card-header"><i class="bi bi-building me-2 text-primary"></i>Entreprise</div>
+<div class="card-body p-4">{{ form_start(form) }}{{ form_widget(form) }}<div class="d-flex gap-2 pt-3 border-top"><button type="submit" class="btn btn-primary"><i class="bi bi-check-lg me-1"></i>Enregistrer</button><a href="{{ path('entreprise_index') }}" class="btn btn-outline-secondary">Annuler</a></div>{{ form_end(form) }}</div></div></div></div>
 {% endblock %}

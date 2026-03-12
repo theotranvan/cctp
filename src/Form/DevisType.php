@@ -1,51 +1,43 @@
 <?php
-
 namespace App\Form;
 
 use App\Entity\Chantier;
 use App\Entity\Devis;
 use App\Entity\Entreprise;
-use App\Entity\Installeur;
 use Doctrine\ORM\EntityRepository;
-use Doctrine\ORM\Tools\EntityRepositoryGenerator;
+use Doctrine\ORM\QueryBuilder;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\AbstractType;
-use Symfony\Component\Form\Extension\Core\Type\FileType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
 class DevisType extends AbstractType
 {
-    public function buildForm(FormBuilderInterface $builder, array $options)
+    public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder
-            ->add('chantier', EntityType::class,[
-                'class' => Chantier::class
+            ->add('chantier', EntityType::class, [
+                'class' => Chantier::class,
+                'choice_label' => 'nomChantier',
+                'label' => 'Chantier',
+                'placeholder' => 'Sélectionner un chantier',
             ])
-            
             ->add('entreprise', EntityType::class, [
                 'class' => Entreprise::class,
-                'query_builder' => function (EntityRepository $er) {
+                'choice_label' => 'nomEntreprise',
+                'query_builder' => function (EntityRepository $er): QueryBuilder {
                     return $er->createQueryBuilder('e')
                         ->where('e.role = :role')
-                        ->setParameter(':role', "Installateur");
+                        ->setParameter('role', Entreprise::ROLE_INSTALLATEUR)
+                        ->orderBy('e.nomEntreprise', 'ASC');
                 },
                 'label' => 'Installateur',
-                'choice_label' => 'nom_entreprise',
-                'multiple' => false,
-                'expanded' => true,
-            ])
-            ->add('fichier', FileType::class, [
-                'mapped' => false,
-                'required' => false
-            ])
-        ;
+                'placeholder' => 'Sélectionner un installateur',
+            ]);
     }
 
-    public function configureOptions(OptionsResolver $resolver)
+    public function configureOptions(OptionsResolver $resolver): void
     {
-        $resolver->setDefaults([
-            'data_class' => Devis::class,
-        ]);
+        $resolver->setDefaults(['data_class' => Devis::class]);
     }
 }

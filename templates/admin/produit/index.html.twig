@@ -1,55 +1,39 @@
 {% extends 'base.html.twig' %}
-
-{% block title %}Liste des éléments{% endblock %}
-
+{% block title %}Produits{% endblock %}
+{% block page_title %}<i class="bi bi-box me-2 text-primary"></i>Produits{% endblock %}
 {% block body %}
-<h1>Liste des éléments</h1>
-<div class="divButton">
-    <a class="btn btn-primary" href="{{ path('produit_new') }}" role="button">Créer nouveau élément</a>
-    <a class="btn btn-secondary" href="{{ path('admin_home') }}" role="button">Retour à l'accueil</a>
+<div class="d-flex justify-content-between align-items-center mb-4">
+<nav aria-label="breadcrumb"><ol class="breadcrumb mb-0"><li class="breadcrumb-item"><a href="{{ path('admin_dashboard') }}">Accueil</a></li><li class="breadcrumb-item active">Produits</li></ol></nav>
+<a href="{{ path('produit_new') }}" class="btn btn-primary"><i class="bi bi-plus-circle me-1"></i>Nouveau produit</a>
 </div>
-
-<div class="container">
-{% for message in app.flashes('message')%}
-    <div class="alert alert-success" role="alert">{{ message }}</div>
-{% endfor %}
-{% for lot in lots %}
-
-    <h2>{{ lot.nomlot }}</h2>
-        {% for systeme in systemes %}
-            <h3>{{ systeme.nomsysteme }}</h3>
-                <table class="table sortable">
-                    <thead>
-                        <tr>
-                            <th>Nom_produit</th>
-                            <th>Système</th>
-                            <th>Ordre</th>
-                            <th>actions</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {% for produit in produits %}
-                        {% if systeme.nomsysteme == produit.systeme.nomsysteme and lot.nomlot == produit.lot.nomlot and produit.nomProduit|slice(0,6) != "Normes" %}
-                            <tr draggable="true" rel="{{ produit.id }}">
-                                <td>{{ produit.nomProduit }}</td>
-                                <td>{{ produit.ordre }}</td>
-                                <td>{{ produit.systeme }}</td>
-                                <td>
-                                    <a class="btn btn-primary" href="{{ path('produit_details', {'id': produit.id}) }}" role="button">Document</a>
-                                    <a class="btn btn-warning" href="{{ path('produit_edit', {'id': produit.id}) }}" role="button">Mettre à jour</a>
-                                </td>
-                            </tr>    
-                        {% endif %}
-                        
-                        {% endfor %}
-                    </tboby>
-                </table>
-        {% endfor %}
-{% endfor %}  
+<div class="card mb-3"><div class="card-body py-2">
+<form method="get" class="row g-2 align-items-end">
+<div class="col-md-4"><label class="form-label small fw-semibold mb-1">Recherche</label><input type="text" name="q" value="{{ search }}" class="form-control form-control-sm" placeholder="Nom du produit..."></div>
+<div class="col-md-4"><label class="form-label small fw-semibold mb-1">Lot</label><select name="lot" class="form-select form-select-sm"><option value="">Tous les lots</option>{% for lot in lots %}<option value="{{ lot.id }}" {{ current_lot == lot.id ? 'selected' : '' }}>{{ lot.nomLot }}</option>{% endfor %}</select></div>
+<div class="col-md-4"><button type="submit" class="btn btn-sm btn-primary me-1"><i class="bi bi-search me-1"></i>Filtrer</button><a href="{{ path('produit_index') }}" class="btn btn-sm btn-outline-secondary">Réinitialiser</a></div>
+</form>
+</div></div>
+<div class="card"><div class="card-body p-0">
+{% if produits.totalItemCount == 0 %}
+<div class="text-center py-5 text-muted"><i class="bi bi-box display-4 d-block mb-3 opacity-25"></i><p>Aucun produit trouvé.</p></div>
+{% else %}
+<div class="table-responsive"><table class="table table-hover mb-0">
+<thead><tr><th>Nom du produit</th><th>Lot</th><th>Système</th><th>Unité</th><th class="text-end">Actions</th></tr></thead>
+<tbody>{% for produit in produits %}<tr>
+<td class="fw-semibold">{{ produit.nomProduit }}</td>
+<td>{{ produit.lot ? produit.lot.nomLot : '-' }}</td>
+<td>{{ produit.systeme ? produit.systeme.nomSysteme : '-' }}</td>
+<td>{{ produit.unite ?? '-' }}</td>
+<td class="text-end">
+<div class="btn-group btn-group-sm">
+<a href="{{ path('produit_show', {id: produit.id}) }}" class="btn btn-outline-primary"><i class="bi bi-eye"></i></a>
+<a href="{{ path('produit_edit', {id: produit.id}) }}" class="btn btn-outline-secondary"><i class="bi bi-pencil"></i></a>
+<button type="button" class="btn btn-outline-danger" onclick="if(confirm('Supprimer ?')) document.getElementById('del-p-{{ produit.id }}').submit()"><i class="bi bi-trash"></i></button>
 </div>
-
-
-{% endblock %}
-{% block javascripts %}
-    <script src="{{ asset('js/dragDrop.js') }}"></script>
+<form id="del-p-{{ produit.id }}" method="post" action="{{ path('produit_delete', {id: produit.id}) }}" class="d-none"><input type="hidden" name="_token" value="{{ csrf_token('delete' ~ produit.id) }}"></form>
+</td></tr>{% endfor %}</tbody>
+</table></div>
+<div class="p-3 border-top">{{ knp_pagination_render(produits) }}</div>
+{% endif %}
+</div></div>
 {% endblock %}

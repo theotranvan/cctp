@@ -1,16 +1,8 @@
 {% extends 'base.html.twig' %}
-
-{% block title %}Nouveau Devis{% endblock %}
-
+{% block title %}Devis{% endblock %}
+{% block page_title %}<i class="bi bi-receipt me-2 text-primary"></i>Devis{% endblock %}
 {% block body %}
-    <h1>Insérer un Devis</h1>
-        
-    <div class="divButton">
-        <a class="btn btn-primary" href="{{ path('devis_index') }}">Retour liste Devis</a>
-        <a class="btn btn-secondary" href="{{ path('admin_home') }}" role="button">Retour à l'accueil</a>
-    </div>
-    
-    <div class="container">
-        {{ include('admin/devis/_form.html.twig') }}
-    </div>
+<nav aria-label="breadcrumb" class="mb-4"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="{{ path('admin_dashboard') }}">Accueil</a></li><li class="breadcrumb-item"><a href="{{ path('devis_index') }}">Devis</a></li><li class="breadcrumb-item active">new</li></ol></nav>
+<div class="row justify-content-center"><div class="col-lg-7"><div class="card"><div class="card-header">Devis</div>
+<div class="card-body p-4">{{ form_start(form) }}{{ form_widget(form) }}<div class="d-flex gap-2 pt-3 border-top"><button type="submit" class="btn btn-primary"><i class="bi bi-check-lg me-1"></i>Enregistrer</button><a href="{{ path('devis_index') }}" class="btn btn-outline-secondary">Annuler</a></div>{{ form_end(form) }}</div></div></div></div>
 {% endblock %}

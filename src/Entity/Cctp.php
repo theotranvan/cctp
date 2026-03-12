@@ -1,243 +1,80 @@
 <?php
-
 namespace App\Entity;
-
 use App\Repository\CctpRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Gedmo\Mapping\Annotation as Gedmo;
 
-/**
- * @ORM\Entity(repositoryClass=CctpRepository::class)
- */
+#[ORM\Entity(repositoryClass: CctpRepository::class)]
 class Cctp
 {
-    /**
-     * @ORM\Id
-     * @ORM\GeneratedValue
-     * @ORM\Column(type="integer")
-     */
-    private $id;
+    #[ORM\Id]
+    #[ORM\GeneratedValue]
+    #[ORM\Column]
+    private ?int $id = null;
 
-    /**
-     * @ORM\Column(type="string", length=150)
-     */
-    private $titre;
+    #[ORM\Column(length: 150)]
+    private ?string $titre = null;
 
+    #[ORM\Column(length: 255)]
+    private ?string $nomOperation = null;
 
-    /**
-     * @ORM\ManyToMany(targetEntity=Lot::class)
-     */
-    private $lotCctp;
+    #[ORM\Column]
+    private ?int $numAffaire = null;
 
-    /**
-     * @ORM\ManyToMany(targetEntity=Produit::class, mappedBy="cctp")
-     * @ORM\OrderBy({"ordre" = "ASC" })
-     */
-    private $produits;
+    #[ORM\Column]
+    private bool $close = false;
 
-    /**
-     * @ORM\Column(type="string", length=255)
-     */
-    private $nom_operation;
+    #[Gedmo\Timestampable(on: 'create')]
+    #[ORM\Column]
+    private ?\DateTimeImmutable $createdAt = null;
 
-    /**
-     * @Gedmo\Timestampable(on="create")
-     * @ORM\Column(type="datetime_immutable")
-     */
-    private $created_At;
+    #[ORM\ManyToOne(targetEntity: Utilisateur::class, inversedBy: 'cctps')]
+    #[ORM\JoinColumn(nullable: false)]
+    private ?Utilisateur $utilisateur = null;
 
-    /**
-     * @ORM\ManyToOne(targetEntity=Utilisateur::class, inversedBy="cctps")
-     * @ORM\JoinColumn(nullable=false)
-     */
-    private $utilisateur;
+    #[ORM\ManyToMany(targetEntity: Lot::class, inversedBy: 'cctps')]
+    #[ORM\JoinTable(name: 'cctp_lot')]
+    private Collection $lots;
 
-    /**
-     * @ORM\Column(type="boolean")
-     */
-    private $close;
+    #[ORM\ManyToMany(targetEntity: Produit::class, inversedBy: 'cctps')]
+    #[ORM\JoinTable(name: 'produit_cctp')]
+    #[ORM\OrderBy(['ordre' => 'ASC'])]
+    private Collection $produits;
 
-    /**
-     * @ORM\ManyToMany(targetEntity=Entreprise::class, inversedBy="cctps")
-     */
-    private $entreprise;
-
-    /**
-     * @ORM\Column(type="integer")
-     */
-    private $NumAffaire;
-
+    #[ORM\ManyToMany(targetEntity: Entreprise::class, inversedBy: 'cctps')]
+    #[ORM\JoinTable(name: 'cctp_entreprise')]
+    private Collection $entreprises;
 
     public function __construct()
     {
-        $this->lotCctp = new ArrayCollection();
+        $this->lots = new ArrayCollection();
         $this->produits = new ArrayCollection();
-        $this->entreprise = new ArrayCollection();
+        $this->entreprises = new ArrayCollection();
     }
 
-    public function getId(): ?int
-    {
-        return $this->id;
-    }
-
-    public function setId(int $id): self
-    {
-        $this->id = $id;
-
-        return $this;
-    }
-
-    public function __toString()
-    {
-        return $this->lotCctp;
-    }
-
-    public function getTitre(): ?string
-    {
-        return $this->titre;
-    }
-
-    public function setTitre(string $titre): self
-    {
-        $this->titre = $titre;
-
-        return $this;
-    }
-
-
-    /**
-     * @return Collection|Lot[]
-     */
-    public function getLotCctp(): Collection
-    {
-        return $this->lotCctp;
-    }
-
-    public function addLotCctp(Lot $lotCctp): self
-    {
-        if (!$this->lotCctp->contains($lotCctp)) {
-            $this->lotCctp[] = $lotCctp;
-        }
-
-        return $this;
-    }
-
-    public function removeLotCctp(Lot $lotCctp): self
-    {
-        $this->lotCctp->removeElement($lotCctp);
-
-        return $this;
-    }
-
-    /**
-     * @return Collection|Produit[]
-     */
-    public function getProduits(): Collection
-    {
-        return $this->produits;
-    }
-
-    public function addProduit(Produit $produit): self
-    {
-        if (!$this->produits->contains($produit)) {
-            $this->produits[] = $produit;
-            $produit->addCctp($this);
-        }
-
-        return $this;
-    }
-
-    public function removeProduit(Produit $produit): self
-    {
-        if ($this->produits->removeElement($produit)) {
-            $produit->removeCctp($this);
-        }
-
-        return $this;
-    }
-
-    
-    public function getNomOperation(): ?string
-    {
-        return $this->nom_operation;
-    }
-
-    public function setNomOperation(string $nom_operation): self
-    {
-        $this->nom_operation = $nom_operation;
-
-        return $this;
-    }
-
-    public function getCreatedAt(): ?\DateTimeImmutable
-    {
-        return $this->created_At;
-    }
-
-    public function getUtilisateur(): ?Utilisateur
-    {
-        return $this->utilisateur;
-    }
-
-    public function setUtilisateur(?Utilisateur $utilisateur): self
-    {
-        $this->utilisateur = $utilisateur;
-
-        return $this;
-    }
-
-    public function getClose(): ?bool
-    {
-        return $this->close;
-    }
-
-    public function setClose(bool $close): self
-    {
-        $this->close = $close;
-
-        return $this;
-    }
-
-    /**
-     * @return Collection<int, Entreprise>
-     */
-    public function getEntreprise(): Collection
-    {
-        return $this->entreprise;
-    }
-
-    public function addEntreprise(Entreprise $entreprise): self
-    {
-        if (!$this->entreprise->contains($entreprise)) {
-            $this->entreprise[] = $entreprise;
-        }
-
-        return $this;
-    }
-
-    public function removeEntreprise(Entreprise $entreprise): self
-    {
-        $this->entreprise->removeElement($entreprise);
-
-        return $this;
-    }
-
-    public function getNumAffaire(): ?int
-    {
-        return $this->NumAffaire;
-    }
-
-    public function setNumAffaire(int $NumAffaire): self
-    {
-        $this->NumAffaire = $NumAffaire;
-
-        return $this;
-    }
-
-
-
-
-
+    public function getId(): ?int { return $this->id; }
+    public function getTitre(): ?string { return $this->titre; }
+    public function setTitre(string $titre): static { $this->titre = $titre; return $this; }
+    public function getNomOperation(): ?string { return $this->nomOperation; }
+    public function setNomOperation(string $nomOperation): static { $this->nomOperation = $nomOperation; return $this; }
+    public function getNumAffaire(): ?int { return $this->numAffaire; }
+    public function setNumAffaire(int $numAffaire): static { $this->numAffaire = $numAffaire; return $this; }
+    public function isClose(): bool { return $this->close; }
+    public function setClose(bool $close): static { $this->close = $close; return $this; }
+    public function getCreatedAt(): ?\DateTimeImmutable { return $this->createdAt; }
+    public function setCreatedAt(\DateTimeImmutable $createdAt): static { $this->createdAt = $createdAt; return $this; }
+    public function getUtilisateur(): ?Utilisateur { return $this->utilisateur; }
+    public function setUtilisateur(?Utilisateur $utilisateur): static { $this->utilisateur = $utilisateur; return $this; }
+    public function getLots(): Collection { return $this->lots; }
+    public function addLot(Lot $lot): static { if (!$this->lots->contains($lot)) { $this->lots->add($lot); } return $this; }
+    public function removeLot(Lot $lot): static { $this->lots->removeElement($lot); return $this; }
+    public function getProduits(): Collection { return $this->produits; }
+    public function addProduit(Produit $produit): static { if (!$this->produits->contains($produit)) { $this->produits->add($produit); } return $this; }
+    public function removeProduit(Produit $produit): static { $this->produits->removeElement($produit); return $this; }
+    public function getEntreprises(): Collection { return $this->entreprises; }
+    public function addEntreprise(Entreprise $entreprise): static { if (!$this->entreprises->contains($entreprise)) { $this->entreprises->add($entreprise); } return $this; }
+    public function removeEntreprise(Entreprise $entreprise): static { $this->entreprises->removeElement($entreprise); return $this; }
+    public function __toString(): string { return sprintf('[%d] %s', $this->numAffaire ?? 0, $this->titre ?? ''); }
 }

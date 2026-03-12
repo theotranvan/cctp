@@ -1,17 +1,14 @@
 {% extends 'base.html.twig' %}
-
-{% block title %}Ajouter un MOA{% endblock %}
-
+{% block title %}Nouveau MOA{% endblock %}
+{% block page_title %}<i class="bi bi-plus-circle me-2 text-primary"></i>Nouveau MOA{% endblock %}
 {% block body %}
-    <h1>Ajouter un MOA</h1>
-    
-    <div class="divButton">
-        <a class="btn btn-primary" href="{{ path('moa_index') }}" role="button">Retour Liste MOA</a>
-        <a class="btn btn-secondary" href="{{ path('admin_home') }}" role="button">Retour à l'acceuil</a>
-    </div>
-
-    <div class="container">
-    {{ include('admin/moa/_form.html.twig') }}
-    </div>
-    
+<nav aria-label="breadcrumb" class="mb-4"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="{{ path('admin_dashboard') }}">Accueil</a></li><li class="breadcrumb-item"><a href="{{ path('moa_index') }}">MOAs</a></li><li class="breadcrumb-item active">Nouveau</li></ol></nav>
+<div class="row justify-content-center"><div class="col-lg-6"><div class="card">
+<div class="card-header"><i class="bi bi-person-badge me-2 text-primary"></i>Créer un MOA</div>
+<div class="card-body p-4">
+{{ form_start(form) }}
+{{ form_widget(form) }}
+<div class="d-flex gap-2 pt-3 border-top"><button type="submit" class="btn btn-primary"><i class="bi bi-check-lg me-1"></i>Créer</button><a href="{{ path('moa_index') }}" class="btn btn-outline-secondary">Annuler</a></div>
+{{ form_end(form) }}
+</div></div></div></div>
 {% endblock %}

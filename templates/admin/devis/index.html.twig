@@ -1,58 +1,28 @@
 {% extends 'base.html.twig' %}
-
-{% block title %}Liste Devis{% endblock %}
-
+{% block title %}Devis{% endblock %}
+{% block page_title %}<i class="bi bi-receipt me-2 text-primary"></i>Devis{% endblock %}
 {% block body %}
-    <h1>Liste Devis</h1>
-
-    <div class="divButton">
-        <a class="btn btn-primary" href="{{ path('devis_new') }}">Insérer nouveau Devis</a>
-        <a class="btn btn-secondary" href="{{ path('admin_home') }}" role="button">Retour à l'accueil</a>
-    </div>
-
-    <div class="container">
-        {% for message in app.flashes('message')%}
-            <div class="alert alert-success" role="alert">{{ message }}</div>
-        {% endfor %}
-
-        {{ form_start(form) }}
-        {{ form_end(form) }}
-    
-        {% if usage != null %}
-        <table class="table">
-            <thead>
-                <tr>
-                    <th>CreatedAt</th>
-                    <th>Chantier</th>
-                    <th>Surface</th>
-                    <th>Usage</th>
-                    <th>Installeur</th>
-                    <th>actions</th>
-                </tr>
-            </thead>
-            <tbody>
-            {% for devi in devis %}
-            {% if devi.chantier.typeusage == usage %}
-                <tr>
-                    <td>{{ devi.createdAt ? devi.createdAt|date('d-m-Y') : '' }}</td>
-                    <td>{{ devi.chantier }}</td>
-                    <td>{{ devi.chantier.surface }}</td>
-                    <td>{{ devi.chantier.typeusage }}</td>
-                    <td>{{ devi.entreprise }}</td>
-                    <td>
-                        <a class="btn btn-primary" href="{{ path('devis_show', {'id': devi.id}) }}">Voir</a>
-                        <a class="btn btn-warning" href="{{ path('devis_edit', {'id': devi.id}) }}">Mise à jour</a>
-                    </td>
-                </tr>
-            {% endif %}
-            {% else %}
-                <tr>
-                    <td colspan="3">no records found</td>
-                </tr>
-            {% endfor %}
-            </tbody>
-        </table>
-        {% endif %}
-    </div>
+<div class="d-flex justify-content-between align-items-center mb-4">
+<nav aria-label="breadcrumb"><ol class="breadcrumb mb-0"><li class="breadcrumb-item"><a href="{{ path('admin_dashboard') }}">Accueil</a></li><li class="breadcrumb-item active">Devis</li></ol></nav>
+<a href="{{ path('devis_new') }}" class="btn btn-primary"><i class="bi bi-plus-circle me-1"></i>Nouveau devis</a>
+</div>
+<div class="card"><div class="card-body p-0">
+{% if devis.totalItemCount == 0 %}<div class="text-center py-5 text-muted"><p>Aucun devis.</p></div>
+{% else %}
+<div class="table-responsive"><table class="table table-hover mb-0">
+<thead><tr><th>Date</th><th>Chantier</th><th>Entreprise</th><th>Total HT</th><th class="text-end">Actions</th></tr></thead>
+<tbody>{% for d in devis %}<tr>
+<td class="text-muted small">{{ d.createdAt ? d.createdAt|date('d/m/Y') : '-' }}</td>
+<td>{{ d.chantier ? d.chantier.nomChantier : '-' }}</td>
+<td>{{ d.entreprise ? d.entreprise.nomEntreprise : '-' }}</td>
+<td class="fw-semibold">{{ d.totalHT|number_format(2, ',', ' ') }} €</td>
+<td class="text-end"><div class="btn-group btn-group-sm">
+<a href="{{ path('devis_show', {id: d.id}) }}" class="btn btn-outline-primary"><i class="bi bi-eye"></i></a>
+<a href="{{ path('devis_edit', {id: d.id}) }}" class="btn btn-outline-secondary"><i class="bi bi-pencil"></i></a>
+<button type="button" class="btn btn-outline-danger" onclick="if(confirm('Supprimer ?')) document.getElementById('del-d-{{ d.id }}').submit()"><i class="bi bi-trash"></i></button>
+</div><form id="del-d-{{ d.id }}" method="post" action="{{ path('devis_delete', {id: d.id}) }}" class="d-none"><input type="hidden" name="_token" value="{{ csrf_token('delete' ~ d.id) }}"></form></td></tr>{% endfor %}</tbody>
+</table></div>
+<div class="p-3 border-top">{{ knp_pagination_render(devis) }}</div>
+{% endif %}
+</div></div>
 {% endblock %}
-

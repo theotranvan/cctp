@@ -1,14 +1,25 @@
 {% extends 'base.html.twig' %}
-
-{% block title %}Nouveau Chantier{% endblock %}
-
+{% block title %}Chantiers{% endblock %}
+{% block page_title %}<i class="bi bi-geo-alt me-2 text-primary"></i>Chantiers{% endblock %}
 {% block body %}
-    <h1>Créer nouveau Chantier</h1>
-    <div class="divButton">
-        <a class="btn btn-primary" href="{{ path('chantier_index') }}">Retour liste chantier</a>
-        <a class="btn btn-secondary" href="{{ path('admin_home') }}" role="button">Retour à l'accueil</a>
-    </div>
-    <div class="container">
-        {{ include('admin/chantier/_form.html.twig') }}   
-    </div>
+<nav aria-label="breadcrumb" class="mb-4"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="{{ path('admin_dashboard') }}">Accueil</a></li><li class="breadcrumb-item active">Chantiers</li></ol></nav>
+{% if 'new' == 'index' %}
+<div class="d-flex justify-content-end mb-3"><a href="{{ path('chantier_new') }}" class="btn btn-primary"><i class="bi bi-plus-circle me-1"></i>Nouveau chantier</a></div>
+<div class="card"><div class="card-body p-0">
+{% if chantiers.totalItemCount == 0 %}<div class="text-center py-5 text-muted"><p>Aucun chantier.</p></div>
+{% else %}<div class="table-responsive"><table class="table table-hover mb-0"><thead><tr><th>Nom</th><th>Surface</th><th>Type usage</th><th class="text-end">Actions</th></tr></thead>
+<tbody>{% for chantier in chantiers %}<tr>
+<td class="fw-semibold">{{ chantier.nomChantier }}</td>
+<td>{{ chantier.surface ?? '-' }}</td>
+<td>{{ chantier.typeusage ? chantier.typeusage.nomUsage : '-' }}</td>
+<td class="text-end"><div class="btn-group btn-group-sm">
+<a href="{{ path('chantier_edit', {id: chantier.id}) }}" class="btn btn-outline-secondary"><i class="bi bi-pencil"></i></a>
+<button type="button" class="btn btn-outline-danger" onclick="if(confirm('Supprimer ?')) document.getElementById('del-ch-{{ chantier.id }}').submit()"><i class="bi bi-trash"></i></button>
+</div><form id="del-ch-{{ chantier.id }}" method="post" action="{{ path('chantier_delete', {id: chantier.id}) }}" class="d-none"><input type="hidden" name="_token" value="{{ csrf_token('delete' ~ chantier.id) }}"></form></td></tr>{% endfor %}</tbody></table></div>
+<div class="p-3 border-top">{{ knp_pagination_render(chantiers) }}</div>
+{% endif %}</div></div>
+{% else %}
+<div class="row justify-content-center"><div class="col-lg-7"><div class="card"><div class="card-header">Chantier</div>
+<div class="card-body p-4">{{ form_start(form) }}{{ form_widget(form) }}<div class="d-flex gap-2 pt-3 border-top"><button type="submit" class="btn btn-primary"><i class="bi bi-check-lg me-1"></i>Enregistrer</button><a href="{{ path('chantier_index') }}" class="btn btn-outline-secondary">Annuler</a></div>{{ form_end(form) }}</div></div></div></div>
+{% endif %}
 {% endblock %}

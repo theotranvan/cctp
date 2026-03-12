@@ -1,18 +1,22 @@
 {% extends 'base.html.twig' %}
-
-{% block title %}Mise à jour élément{% endblock %}
-
+{% block title %}Modifier {{ produit.nomProduit }}{% endblock %}
+{% block page_title %}<i class="bi bi-pencil me-2 text-primary"></i>Modifier {{ produit.nomProduit }}{% endblock %}
 {% block body %}
-    <h1>Mise à jour élément</h1>
-
-    <div class="divButtonEditCctp">
-        <a class="btn btn-primary" href="{{ path('produit_index') }}" role="button">Retour liste éléments</a>
-        {{ include('admin/produit/_delete_form.html.twig') }}
-        <a class="btn btn-secondary" href="{{ path('admin_home') }}" role="button">Retour à l'accueil</a>
-    </div>
-
-    <div class="container">
-        {{ include('admin/produit/_form.html.twig', {'button_label': 'Valider'}) }}
-    </div>
-
+<nav aria-label="breadcrumb" class="mb-4"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="{{ path('admin_dashboard') }}">Accueil</a></li><li class="breadcrumb-item"><a href="{{ path('produit_index') }}">Produits</a></li><li class="breadcrumb-item"><a href="{{ path('produit_show', {id: produit.id}) }}">{{ produit.nomProduit }}</a></li><li class="breadcrumb-item active">Modifier</li></ol></nav>
+<div class="row justify-content-center"><div class="col-lg-9"><div class="card">
+<div class="card-header"><i class="bi bi-pencil-square me-2 text-primary"></i>Modifier le produit</div>
+<div class="card-body p-4">
+{{ form_start(form) }}
+<div class="row g-3">
+<div class="col-md-8"><div class="mb-3">{{ form_label(form.nomProduit) }}{{ form_widget(form.nomProduit, {attr: {class: 'form-control'}}) }}{{ form_errors(form.nomProduit) }}</div></div>
+<div class="col-md-4"><div class="mb-3">{{ form_label(form.unite) }}{{ form_widget(form.unite, {attr: {class: 'form-control'}}) }}{{ form_errors(form.unite) }}</div></div>
+<div class="col-12"><div class="mb-3">{{ form_label(form.title) }}{{ form_widget(form.title, {attr: {class: 'form-control'}}) }}{{ form_errors(form.title) }}</div></div>
+<div class="col-md-6"><div class="mb-3">{{ form_label(form.lot) }}{{ form_widget(form.lot, {attr: {class: 'form-select'}}) }}{{ form_errors(form.lot) }}</div></div>
+<div class="col-md-6"><div class="mb-3">{{ form_label(form.systeme) }}{{ form_widget(form.systeme, {attr: {class: 'form-select'}}) }}{{ form_errors(form.systeme) }}</div></div>
+<div class="col-12"><div class="mb-3">{{ form_label(form.content) }}{{ form_widget(form.content, {attr: {class: 'form-control', rows: 10}}) }}{{ form_errors(form.content) }}</div></div>
+<div class="col-12"><div class="mb-3">{{ form_label(form.modifiable) }}{{ form_widget(form.modifiable, {attr: {class: 'form-control', rows: 5}}) }}{{ form_errors(form.modifiable) }}</div></div>
+</div>
+<div class="d-flex gap-2 pt-3 border-top"><button type="submit" class="btn btn-primary"><i class="bi bi-check-lg me-1"></i>Enregistrer</button><a href="{{ path('produit_show', {id: produit.id}) }}" class="btn btn-outline-secondary">Annuler</a></div>
+{{ form_end(form) }}
+</div></div></div></div>
 {% endblock %}

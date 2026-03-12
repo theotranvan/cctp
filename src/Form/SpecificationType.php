@@ -1,39 +1,31 @@
 <?php
-
 namespace App\Form;
 
-use App\Entity\Produit;
 use App\Entity\Specification;
-use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\AbstractType;
+use Symfony\Component\Form\Extension\Core\Type\MoneyType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
+use Symfony\Component\Validator\Constraints\NotBlank;
+use Symfony\Component\Validator\Constraints\Positive;
 
 class SpecificationType extends AbstractType
 {
-    public function buildForm(FormBuilderInterface $builder, array $options)
+    public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder
-            ->add('marque', TextType::class, [
-                'required' => false
-            ])
-            ->add('type', TextType::class, [
-                'required' => false
-            ])
-            ->add('prix_unitaire', TextType::class)
-            ->add('produit', EntityType::class, [
-                'class' => Produit::class,
-                'choice_label' => 'nom_produit',
-                
-            ])
-        ;
+            ->add('marque', TextType::class, ['label' => 'Marque', 'required' => false])
+            ->add('type', TextType::class, ['label' => 'Type / Référence', 'required' => false])
+            ->add('prixUnitaire', MoneyType::class, [
+                'label' => 'Prix unitaire HT (€)',
+                'currency' => 'EUR',
+                'constraints' => [new NotBlank(), new Positive()],
+            ]);
     }
 
-    public function configureOptions(OptionsResolver $resolver)
+    public function configureOptions(OptionsResolver $resolver): void
     {
-        $resolver->setDefaults([
-            'data_class' => Specification::class,
-        ]);
+        $resolver->setDefaults(['data_class' => Specification::class]);
     }
 }
