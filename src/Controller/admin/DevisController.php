@@ -46,7 +46,6 @@ class DevisController extends AbstractController
             $idUsage = $request->request->get('typeusage')['nom_usage'];
             
             $usage = $typeusageRepo->findOneBy(['id' => $idUsage]);
-            //dd($usage->getNomUsage());
             
 
             

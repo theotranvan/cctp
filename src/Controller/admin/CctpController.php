@@ -11,7 +11,6 @@ use App\Repository\DoctypeRepository;
 use App\Repository\DocFinalRepository;
 use Doctrine\Persistence\ManagerRegistry;
 use App\Repository\OptionnelRepository;
-use App\Controller\admin\ProduitRepository;
 use App\Repository\ProduitRepository as RepositoryProduitRepository;
 use App\Repository\SystemeRepository;
 use PhpOffice\PhpWord\TemplateProcessor;
@@ -555,7 +554,7 @@ class CctpController extends AbstractController
             ->add('Valider', SubmitType::class)
             ->getForm();*/
 
-        //affichage du form en focntion du nombre de lots
+        //affichage du form en fonction du nombre de lots
         return $this->render('admin/cctp/ajout_prod.html.twig', [
             'cctp' => $cctp,
             'form' => $form->createView()
@@ -598,7 +597,7 @@ class CctpController extends AbstractController
      */
     public function show(Cctp $cctp, SystemeRepository $systemeRepo, SessionInterface $session): Response
     {
-        $compteur = $session->get("comteur ajout", []);
+        $compteur = $session->get("compteur ajout", []);
 
         return $this->render('admin/cctp/show.html.twig', [
             'cctp' => $cctp,
@@ -636,7 +635,6 @@ class CctpController extends AbstractController
         $entityManager->persist($cctp);
         $entityManager->flush();
 
-        //dd($cctp);
         //concatenation des noms de lots s'il y'en a plusieurs
         $lots = $cctp->getLotCctp();
         if (isset($lots[2]) && $lots[2] != null) {
@@ -850,7 +848,6 @@ class CctpController extends AbstractController
                 $section->addTitle($lot->getNomLot(), 1);
                 foreach ($lot->getSystemes() as $systeme) {
 
-                    //dd($systeme);
                     if (isset($systeme) && substr($systeme->getNomSysteme(), 0, 5) == 'Carac'){
                         $section->addTitle($systeme->getNomSysteme(), 2);
                         foreach ($produits as $prod) {
@@ -959,7 +956,6 @@ class CctpController extends AbstractController
                 }
                 foreach ($lot->getSystemes() as $systeme) {
 
-                    //dd($systeme);
                     if (isset($systeme) && substr($systeme->getNomSysteme(), 0, 5) != 'Carac'){
                         $section->addTitle($systeme->getNomSysteme(), 2);
                         foreach ($produits as $prod) {
@@ -1250,7 +1246,7 @@ class CctpController extends AbstractController
 
             //si lot chauffage
             if ($lot->getNomLot() == "Chauffage") {
-                //ajout +1 au comteur de paragraphes
+                //ajout +1 au compteur de paragraphes
                 $countLot += 1;
                 /*$section->addTitle($docstype[19]->getTitle(), 2);
                 \PhpOffice\PhpWord\Shared\Html::addHtml($section, $docstype[19]->getContent(), false, false);

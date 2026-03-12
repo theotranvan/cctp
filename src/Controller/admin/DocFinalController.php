@@ -67,7 +67,6 @@ class DocFinalController extends AbstractController
                 //ajout du contenu au panier
                 $panier[$id] = $contenu->getModifiable();
             }
-            dd($panier);
             //enregistrement du panier en session
             $session->set("panier", $panier);
 
@@ -134,7 +133,7 @@ class DocFinalController extends AbstractController
             $entityManager->flush();
 
             //initialisation d'un tableau en session
-            $compteur = $session->get("comteur ajout", []);
+            $compteur = $session->get("compteur ajout", []);
             if(!empty($compteur[strval($id)])){
                 $compteur[strval($id)]++;
             }else{
@@ -142,7 +141,7 @@ class DocFinalController extends AbstractController
             }
             
             //enregistrement en session
-            $session->set("comteur ajout", $compteur);
+            $session->set("compteur ajout", $compteur);
 
             //affichage d'un message si l'opération s'est déroulée avec succès
             $this->addFlash('message', 'contenu enregistré avec succès');
@@ -185,12 +184,10 @@ class DocFinalController extends AbstractController
     public function supprimeLigneDpgf(SessionInterface $session, Request $request, $id, $idCctp, DocFinalRepository $docfinalRepo)
     {   
         $panier = $session->get("lignes_Dpgf", []);
-        //dd($panier);
         
         
             unset($panier[$id]);
         
-        //dd($panier);
         $session->set("lignes_Dpgf", $panier);
 
         //récupération du cctp par son id
@@ -243,11 +240,6 @@ class DocFinalController extends AbstractController
             //appel du panier en session
             $panier = $session->get("lignes_Dpgf", []);
             
-            //dd(array_key_last($panier));
-            /*foreach ($panier as $key => $value)
-            {
-                dd($key, $value);
-            }*/
             if (array_key_last($panier) == null){
                 $id = 0;
             }else{
@@ -268,7 +260,6 @@ class DocFinalController extends AbstractController
                 //enregistrement du panier en session
             $session->set("lignes_Dpgf", $panier);
             
-            //dd($session);
             return $this->redirectToRoute('dpgf_view', ['idCctp' => $idCctp], Response::HTTP_SEE_OTHER);
             }
             else{
@@ -280,7 +271,6 @@ class DocFinalController extends AbstractController
                 $panier[$id]['descritpion'] = $contenu['Description'];
                 $panier[$id]['unite'] = $contenu['Unite'];
                 $panier[$id]['quantite'] = $contenu['Quantite'];
-                //dd($panier);
                 //enregistrement du panier en session
             $session->set("lignes_Dpgf", $panier);
 
@@ -472,9 +462,6 @@ class DocFinalController extends AbstractController
             $specification->setType($docFinal->getType());
             $specification->setPrixUnitaire($docFinal->getMoyenne());
 
-
-            //dd($specification);
-            //$doctrine->getManager()->flush(); 
             $entityManager = $doctrine->getManager();
             $entityManager->persist($docFinal);
             $entityManager->persist($specification);

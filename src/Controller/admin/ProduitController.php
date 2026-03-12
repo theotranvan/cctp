@@ -26,7 +26,6 @@ class ProduitController extends AbstractController
     public function index(ProduitRepository $produitRepository, LotRepository $lotRepository, SystemeRepository $systemeRepository, Request $request): Response
     {
         
-        //dd($produitRepository->getProdOrder([]));
         return $this->render('admin/produit/index2.html.twig', [
         'produits' => $produitRepository->getProdOrder(/*[], ['ordre' => 'ASC']*/),
             //'lots' => $lotRepository->findAll(),
